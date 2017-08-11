@@ -1,0 +1,350 @@
+package com.veeritsolutions.uhelpme.activity;
+
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatEditText;
+import android.util.Patterns;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+
+import com.android.volley.Request;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.veeritsolutions.uhelpme.MyApplication;
+import com.veeritsolutions.uhelpme.R;
+import com.veeritsolutions.uhelpme.api.ApiList;
+import com.veeritsolutions.uhelpme.api.DataObserver;
+import com.veeritsolutions.uhelpme.api.RequestCode;
+import com.veeritsolutions.uhelpme.api.RestClient;
+import com.veeritsolutions.uhelpme.customdialog.CustomDialog;
+import com.veeritsolutions.uhelpme.enums.RegisterBy;
+import com.veeritsolutions.uhelpme.helper.PrefHelper;
+import com.veeritsolutions.uhelpme.helper.ToastHelper;
+import com.veeritsolutions.uhelpme.listener.OnClickEvent;
+import com.veeritsolutions.uhelpme.models.LoginUserModel;
+import com.veeritsolutions.uhelpme.utility.Utils;
+
+import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+
+/**
+ * Created by Admin on 5/11/2017.
+ */
+
+public class SignInActivity extends AppCompatActivity implements OnClickEvent, DataObserver {
+
+    private Button btnLogin, btnLoginFacebook, btnCreateAccount;
+    private EditText edtEmail, edtPassword;
+    private TextView txvForgotPassword, txvOr;
+    private RelativeLayout relParentView;
+
+    private String email, password;
+    private Intent intent;
+    private CallbackManager callbackManager;
+    private AccessToken FBAccessToken;
+    private final String FIELDS = "fields";
+    private List<String> accessUserDetailPermission = Arrays.asList("public_profile", "email");
+    private final String FB_REQUEST_PARAMETER = "id, first_name, last_name, email,gender, birthday, location";
+    private DataObserver dataObserver;
+    private String lang = "en";
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initFacebookSdk();
+        setContentView(R.layout.activity_sign_in);
+        //  Utils.printFbKeyHash();
+        if (PrefHelper.getInstance().containKey(PrefHelper.LANGUAGE)) {
+            lang = PrefHelper.getInstance().getString(PrefHelper.LANGUAGE, "en");
+        }
+        Configuration config = getBaseContext().getResources().getConfiguration();
+        if (!"".equals(lang) && !config.locale.getLanguage().equals(lang)) {
+            Locale locale = new Locale(lang);
+            Locale.setDefault(locale);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                config.setLocale(locale);
+                //profileActivity.getBaseContext().createConfigurationContext(config);
+                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+            } else {
+                config.locale = locale;
+                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+            }
+            //  profileActivity.recreate();
+        }
+        init();
+        dataObserver = this;
+    }
+
+    private void init() {
+
+        btnLogin = (Button) findViewById(R.id.btn_login);
+        btnLogin.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            btnLogin.setBackgroundResource(R.drawable.drw_button_shape);
+        } else {
+            btnLogin.setBackgroundResource(R.drawable.drw_button_shape_two);
+        }
+
+
+        btnLoginFacebook = (Button) findViewById(R.id.btn_login_facebook);
+        btnLoginFacebook.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+        btnCreateAccount = (Button) findViewById(R.id.btn_create_account);
+        btnCreateAccount.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+        edtEmail = (AppCompatEditText) findViewById(R.id.edt_UserName);
+        edtEmail.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
+        edtPassword = (AppCompatEditText) findViewById(R.id.edt_password);
+        txvForgotPassword = (TextView) findViewById(R.id.txv_forget_pwd);
+        txvForgotPassword.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+        edtPassword.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
+        txvOr = (TextView) findViewById(R.id.txv_or);
+        txvOr.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+
+        relParentView = (RelativeLayout) findViewById(R.id.parentView);
+
+        Utils.setupOutSideTouchHideKeyboard(relParentView);
+    }
+
+
+    @Override
+    public void onClick(View view) {
+
+
+        switch (view.getId()) {
+
+            case R.id.btn_login:
+                Utils.buttonClickEffect(view);
+                if (validateLoginForm()) {
+                    Map<String, String> params = new HashMap<>();
+
+                    //JSONObject params = new JSONObject();
+                    params.put("op", ApiList.GET_USER);
+                    params.put("AuthKey", ApiList.AUTH_KEY);
+                    params.put("EmailId", email);
+                    params.put("Password", password);
+
+
+                    RestClient.getInstance().post(this, Request.Method.POST, params,
+                            ApiList.GET_USER, true, RequestCode.GetUser, this);
+                }
+                break;
+
+            case R.id.btn_create_account:
+                Utils.buttonClickEffect(view);
+                Intent intent = new Intent(this, SignUpActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                //finish();
+                break;
+
+            case R.id.btn_login_facebook:
+                Utils.buttonClickEffect(view);
+                if (Utils.isInternetAvailable()) {
+
+                    loginToFaceBook();
+
+                    //LoginManager.getInstance().logInWithReadPermissions(SignInActivity.this, Arrays.asList("public_profile", "user_friends", "email"));
+                } else {
+
+                    CustomDialog.getInstance().showAlert(this, getString(R.string.str_no_internet_connection_available), true);
+                }
+                break;
+            case R.id.txv_forget_pwd:
+
+                Intent intent1 = new Intent(this, ForgotPasswordActivity.class);
+                startActivity(intent1);
+                break;
+        }
+
+    }
+
+    public void initFacebookSdk() {
+        // Initialize the SDK before executing any other operations,
+        FacebookSdk.sdkInitialize(MyApplication.getInstance());
+        AppEventsLogger.activateApp(MyApplication.getInstance());
+        callbackManager = CallbackManager.Factory.create();
+        Utils.printFbKeyHash();
+    }
+
+    private void getFBUserDetails() {
+        GraphRequest request = GraphRequest.newMeRequest(
+                AccessToken.getCurrentAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+
+                        String firstName = object.optString("first_name");
+                        String lastName = object.optString("last_name");
+                        String email = object.optString("email");
+                        String socialMediaUserId = object.optString("id");
+                        String birthday = object.optString("birthday ");
+
+                        /*bundle = new Bundle();
+                        bundle.putString(Constants.NAME, firstName);
+                        bundle.putString(Constants.EMAIL, email);
+                        bundle.putString(Constants.USERNAME, firstName + lastName);
+                        bundle.putString(Constants.REGISTER_BY, RegisterBy.FACEBOOK.getRegisterBy());*/
+                        LoginUserModel loginUser = new LoginUserModel();
+                        loginUser.setFirstName(firstName);
+                        loginUser.setLastName(lastName);
+                        loginUser.setEmailId(email);
+                        loginUser.setRegisteredBy(RegisterBy.FACEBOOK.getRegisterBy());
+
+                        insertClient(loginUser);
+
+
+                        // RestClient.getInstance().post(SignInActivity.this, Request.Method.POST, );
+                        //PrefHelper.getInstance().setString(PrefHelper.CLIENT_CREDENTIALS, Utils.objectToString(loginUser));
+                    }
+                }
+        );
+        Bundle parameters = new Bundle();
+        parameters.putString(FIELDS, FB_REQUEST_PARAMETER);
+        request.setParameters(parameters);
+        request.executeAsync();
+
+    }
+
+    private void insertClient(LoginUserModel loginUser) {
+
+        Map<String, String> params = new HashMap<>();
+        params.put("op", ApiList.CLIENT_INSERT);
+        params.put("AuthKey", ApiList.AUTH_KEY);
+
+        params.put("FirstName", loginUser.getFirstName());
+        params.put("LastName", loginUser.getLastName());
+        params.put("EmailId", loginUser.getEmailId());
+        params.put("Password", "");
+        params.put("AcTokenId", "");
+        params.put("RegisteredBy", RegisterBy.FACEBOOK.getRegisterBy());
+
+        RestClient.getInstance().post(this, Request.Method.POST, params, ApiList.CLIENT_INSERT,
+                true, RequestCode.clientInsert, this);
+    }
+
+    /**
+     * This method check user logged in with facebook id than it will return it's access token
+     *
+     * @return FBAccessToken (boolean)  : it return current logged in user's active access token
+     */
+    public boolean isLoggedInWithFacebook() {
+        FBAccessToken = AccessToken.getCurrentAccessToken();
+        return FBAccessToken != null;
+    }
+
+    public void loginToFaceBook() {
+
+        LoginManager.getInstance().logInWithReadPermissions(this, accessUserDetailPermission);
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+
+                getFBUserDetails();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                ToastHelper.getInstance().showMessage(getString(R.string.str_login_failed));
+            }
+        });
+    }
+
+    /**
+     * This method destroy the current access token.
+     */
+    public static void logoutToFacebook() {
+        LoginManager.getInstance().logOut();
+    }
+
+    private boolean validateLoginForm() {
+
+        email = edtEmail.getText().toString().trim();
+        password = edtPassword.getText().toString().trim();
+
+        if (email.isEmpty()) {
+            edtEmail.requestFocus();
+            edtEmail.setError(getString(R.string.enter_email));
+            return false;
+        } else if (!email.matches(Patterns.EMAIL_ADDRESS.pattern())) {
+            edtEmail.requestFocus();
+            edtEmail.setError(getString(R.string.enter_valid_email));
+            return false;
+        } else if (password.isEmpty()) {
+
+            edtPassword.requestFocus();
+            edtPassword.setError(getString(R.string.enter_password));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onSuccess(RequestCode mRequestCode, Object mObject) {
+
+        switch (mRequestCode) {
+
+            case GetUser:
+
+                PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
+
+                Intent i = new Intent(SignInActivity.this, HomeActivity.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+                break;
+
+            case clientInsert:
+
+                PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
+                Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+                break;
+
+        }
+    }
+
+    @Override
+    public void onFailure(RequestCode mRequestCode, String mError) {
+        ToastHelper.getInstance().showMessage(mError);
+
+    }
+}

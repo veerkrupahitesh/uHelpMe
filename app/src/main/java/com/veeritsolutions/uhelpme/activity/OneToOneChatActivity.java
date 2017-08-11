@@ -1,0 +1,207 @@
+package com.veeritsolutions.uhelpme.activity;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.veeritsolutions.uhelpme.MyApplication;
+import com.veeritsolutions.uhelpme.R;
+import com.veeritsolutions.uhelpme.adapters.AdpOneToOneChat;
+import com.veeritsolutions.uhelpme.api.ApiList;
+import com.veeritsolutions.uhelpme.api.DataObserver;
+import com.veeritsolutions.uhelpme.api.RequestCode;
+import com.veeritsolutions.uhelpme.api.RestClient;
+import com.veeritsolutions.uhelpme.api.ServerConfig;
+import com.veeritsolutions.uhelpme.helper.PrefHelper;
+import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
+import com.veeritsolutions.uhelpme.listener.OnClickEvent;
+import com.veeritsolutions.uhelpme.models.ChatModel;
+import com.veeritsolutions.uhelpme.models.ChatUsersListModel;
+import com.veeritsolutions.uhelpme.models.LoginUserModel;
+import com.veeritsolutions.uhelpme.utility.Constants;
+import com.veeritsolutions.uhelpme.utility.Utils;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Created by Admin on 8/3/2017.
+ */
+
+public class OneToOneChatActivity extends AppCompatActivity implements OnClickEvent, OnBackPressedEvent, DataObserver {
+    // private View rootView;
+    private RecyclerView recyclerViewChat;
+    private EditText inputText;
+    private Button btnSend;
+    private TextView tvHeader;
+    private ImageView imgProfilePic;
+
+    // private HomeActivity homeActivity;
+    private AdpOneToOneChat adpChat;
+    private ChatUsersListModel specificCategoryChatListModel;
+    // private Bundle bundle;
+    private LoginUserModel loginUserModel;
+
+    // Firebase variables and objects
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReferenceOne, databaseReferenceTwo;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        loginUserModel = LoginUserModel.getLoginUserModel();
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            specificCategoryChatListModel = (ChatUsersListModel) getIntent().getSerializableExtra(Constants.CHAT_DATA);
+        }
+
+        firebaseDatabase = FirebaseDatabase.getInstance(ServerConfig.FCM_APP_URL);
+        databaseReferenceOne = firebaseDatabase.getReference().child(String.valueOf(loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId()));
+        databaseReferenceTwo = firebaseDatabase.getReference().child(String.valueOf(specificCategoryChatListModel.getId() + "_" + loginUserModel.getClientId()));
+
+        setContentView(R.layout.fragment_one_to_one_chat);
+        init();
+
+    }
+
+    private void init() {
+
+        tvHeader = (TextView) findViewById(R.id.tv_headerTitle);
+        tvHeader.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+        tvHeader.setText(specificCategoryChatListModel.getName());
+
+        imgProfilePic = (ImageView) findViewById(R.id.img_profilePhoto);
+        Utils.setImage(specificCategoryChatListModel.getProfilePic(), R.drawable.img_user_placeholder, imgProfilePic);
+
+        recyclerViewChat = (RecyclerView) findViewById(R.id.recyclerView_chat);
+
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerViewChat.setLayoutManager(linearLayoutManager);
+        // Setup our input methods. Enter key on the keyboard or pushing the send button
+        inputText = (EditText) findViewById(R.id.edt_sendMsg);
+        btnSend = (Button) findViewById(R.id.img_send);
+
+        inputText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                String str = inputText.getText().toString().trim();
+
+                if (str.isEmpty()) {
+                    btnSend.setEnabled(false);
+                } else {
+                    btnSend.setEnabled(true);
+                }
+            }
+        });
+
+        adpChat = new AdpOneToOneChat(databaseReferenceOne, this);
+        recyclerViewChat.setAdapter(adpChat);
+        recyclerViewChat.setAddStatesFromChildren(true);
+
+        adpChat.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
+    public void onSuccess(RequestCode mRequestCode, Object mObject) {
+        switch (mRequestCode) {
+
+            case ChatUserInsert:
+                PrefHelper.getInstance().setString(
+                        loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId(),
+                        loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId());
+                break;
+        }
+    }
+
+    @Override
+    public void onFailure(RequestCode mRequestCode, String mError) {
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+
+            case R.id.img_back_header:
+                Utils.buttonClickEffect(view);
+                // homeActivity.popBackFragment();
+                finish();
+                break;
+
+            case R.id.img_send:
+                Utils.buttonClickEffect(view);
+                sendMsg();
+                break;
+        }
+    }
+
+    private void sendMsg() {
+
+        EditText inputText = (EditText) this.findViewById(R.id.edt_sendMsg);
+        String msg = inputText.getText().toString().trim();
+
+        if (!msg.equals("")) {
+            // Create our 'model', a Chat object
+            ChatModel userChat = new ChatModel(loginUserModel.getClientId(), loginUserModel.getFirstName(),
+                    msg, Utils.dateFormat(System.currentTimeMillis(), Constants.MM_DD_YYYY_HH_MM_SS_A), 0);
+            // ChatModel otherChat = new ChatModel(specificCategoryChatListModel.getClientId(), specificCategoryChatListModel.getFirstName(), input, Utils.dateFormat(System.currentTimeMillis(), Constants.MM_DD_YYYY_HH_MM_SS_A));
+            // Create a new, auto-generated child of that chat location, and save our chat data there
+            databaseReferenceOne.push().setValue(userChat);
+            databaseReferenceTwo.push().setValue(userChat);
+            inputText.setText("");
+
+
+            String str = loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId();
+
+            if (!PrefHelper.getInstance().containKey(str)) {
+
+                Map<String, String> params = new HashMap<>();
+                params.put("op", ApiList.CHAT_USER_INSERT);
+                params.put("AuthKey", ApiList.AUTH_KEY);
+                params.put("ClientId", String.valueOf(loginUserModel.getClientId()));
+                params.put("ToClientId", String.valueOf(specificCategoryChatListModel.getId()));
+
+                RestClient.getInstance().post(this, Request.Method.POST, params, ApiList.CHAT_USER_INSERT,
+                        false, RequestCode.ChatUserInsert, this);
+            }
+        }
+    }
+
+}
