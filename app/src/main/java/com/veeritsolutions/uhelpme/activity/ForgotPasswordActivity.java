@@ -94,10 +94,6 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnClick
             case R.id.img_back_header:
               /*  Intent intent = new Intent(this, SignInActivity.class);
                 startActivity(intent);*/
-
-
-
-
                 finish();
                 break;
 
