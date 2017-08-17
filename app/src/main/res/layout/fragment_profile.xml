@@ -119,7 +119,7 @@
                         style="@style/editTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/email"
+                        android:hint="@string/str_email"
                         android:inputType="textEmailAddress"
                         android:maxLength="50"
                         android:maxLines="1" />

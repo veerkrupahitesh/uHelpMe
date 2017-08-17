@@ -58,7 +58,7 @@ public class OtherPersonProfileActivity extends AppCompatActivity implements OnC
 
     //  private RelativeLayout relParentView;
 
-   // private DataObserver dataObserver;
+    // private DataObserver dataObserver;
 
     // private HomeActivity homeActivity;
     private LoginUserModel loginUserModel;
@@ -83,6 +83,7 @@ public class OtherPersonProfileActivity extends AppCompatActivity implements OnC
             params.put("op", ApiList.GET_CLIENT_INFO);
             params.put("ClientId", String.valueOf(loginUserModel.getClientId()));
             params.put("AuthKey", ApiList.AUTH_KEY);
+            //params.put("ClientId", String.valueOf(1));
 
             RestClient.getInstance().post(this, Request.Method.POST, params, ApiList.GET_CLIENT_INFO,
                     true, RequestCode.GetClientInfo, this);

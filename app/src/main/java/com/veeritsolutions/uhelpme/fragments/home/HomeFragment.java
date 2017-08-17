@@ -124,7 +124,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
         super.onCreate(savedInstanceState);
 
         homeActivity = (HomeActivity) getActivity();
-
+        setRetainInstance(true);
     }
 
     @Override
@@ -617,7 +617,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
         _intent.putExtra(Constants.AR_VIEW_DATA, bundle);
         //_intent.putParcelableArrayListExtra(Constants.AR_VIEW_DATA, (ArrayList<? extends Parcelable>) arViewList);
         startActivity(_intent);
-
+        getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
        /* new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

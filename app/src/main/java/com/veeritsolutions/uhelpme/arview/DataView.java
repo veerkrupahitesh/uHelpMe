@@ -97,7 +97,7 @@ public class DataView {
 
     int[][] coordinateArray = new int[20][2];
     private Bitmap bmp;
-   // int position = 1;
+    // int position = 1;
 
     DataView(Context ctx) {
         this._context = ctx;
@@ -138,28 +138,34 @@ public class DataView {
                 ARViewModel arViewModel = arViewList.get(i);
                 TextView tvName = (TextView) rootView.findViewById(R.id.tv_userName);
                 tvName.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-                tvName.setText(checkTextToDisplay(arViewModel.getFirstName() + " " + arViewModel.getLastName()));
+                tvName.setText(arViewModel.getFirstName() /*+ " " + arViewModel.getLastName()*/);
+                //tvName.setText("Jaymin Soneji");
 
                 TextView tvDistance = (TextView) rootView.findViewById(R.id.tv_distance);
                 tvDistance.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-                tvDistance.setText(checkTextToDisplay(String.valueOf(arViewModel.getDistance())) + " km");
+                tvDistance.setText(Math.round(arViewModel.getDistance() * 100.0) / 100.0 + " km");
 
                 ImageView imgIcon = (ImageView) rootView.findViewById(R.id.img_categoryIcon);
-                Glide.with(_context).load(arViewModel.getCategoryIcon1()).into(imgIcon);
+                Glide.with(_context)
+                        .load(arViewModel.getCategoryIcon1())
+                        //.override(30, 50)
+                        .into(imgIcon);
 
                 RatingBar ratingBar = (RatingBar) rootView.findViewById(R.id.rb_rating);
                 ratingBar.setRating(arViewModel.getRating());
 
-                String str = arViewModel.getCategoryColorCode();
+               /* String str = arViewModel.getCategoryColorCode();
                 if (str.length() > 0) {
                     rootView.setBackgroundColor(Color.parseColor(str));
                 } else {
-                    String colorCode = "#0095d7"/*.insert(1, "0D")*/;
+                    String colorCode = "#0095d7"*//*.insert(1, "0D")*//*;
                     rootView.setBackgroundColor(Color.parseColor(colorCode));
-                }
-                    rootView.getBackground().setAlpha(45);
-                layoutParams[i] = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                        RelativeLayout.LayoutParams.MATCH_PARENT);
+                }*/
+                //rootView.setBackgroundColor(Color.WHITE);
+                //rootView.getBackground().setAlpha(45);
+                layoutParams[i] = new RelativeLayout.LayoutParams(700, 500);
+                //layoutParams[i].width = 700;
+                //layoutParams[i].height = 150;
 //                subjectTextViewParams[i] = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT + 1);
 //                subjectTextViewParams[i].addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
 //                subjectTextViewParams[i].topMargin = 10;
@@ -174,12 +180,12 @@ public class DataView {
 //                locationTextView[i].setTextColor(Color.parseColor("#0095d7"));
 //                locationTextView[i].setLayoutParams(subjectTextViewParams[i]);
 
-                //layoutParams[i].setMargins(displayMetrics.widthPixels, displayMetrics.heightPixels, 0, 0);
-                layoutParams[i].setLayoutDirection(LinearLayout.VERTICAL);
+                layoutParams[i].setMargins(displayMetrics.widthPixels, displayMetrics.heightPixels, 0, 0);
+                layoutParams[i].setLayoutDirection(LinearLayout.HORIZONTAL);
                 locationMarkerView[i] = new LinearLayout(_context);
                 locationMarkerView[i].setBackgroundResource(Color.TRANSPARENT);
 
-                locationMarkerView[i].setLayoutParams(layoutParams[i]);
+                //locationMarkerView[i].setLayoutParams(layoutParams[i]);
 
                 locationMarkerView[i].addView(rootView);
                 locationMarkerView[i].setTag(arViewList.get(i));
@@ -353,7 +359,7 @@ public class DataView {
         dw.paintLine(rrl.x, rrl.y, rx + RadarView.RADIUS, ry + RadarView.RADIUS);
         dw.setColor(Color.rgb(255, 255, 255));
         dw.setFontSize(12);
-        radarText(dw, "" + bearing + ((char) 176) + " " + dirTxt, rx + RadarView.RADIUS, ry - 5, true, false, -1);
+        radarText(dw, "" + bearing + ((char) 200) + " " + dirTxt, rx + RadarView.RADIUS, ry - 5, true, false, -1);
 
 
         drawTextBlock(dw);
@@ -380,8 +386,8 @@ public class DataView {
 
             if (isLocationBlock) {
                 layoutParams[count].setMargins((int) (x - w / 2 - 10), (int) (y - h / 2 - 10), 0, 0);
-                layoutParams[count].height = 150;
-                layoutParams[count].width = 350;
+                 layoutParams[count].height = 500;
+                layoutParams[count].width = 2000;
                 locationMarkerView[count].setLayoutParams(layoutParams[count]);
 
             } else {
@@ -422,7 +428,7 @@ public class DataView {
                 nextXofText[i] = (int) (angleToShift * degreetopixelWidth);
                 yawPrevious = this.yaw;
                 isDrawing = true;
-                radarText(dw, arViewList.get(i).getFirstName() + " " + arViewList.get(i).getLastName(), nextXofText[i], yPosition, true, true, i);
+                radarText(dw, arViewList.get(i).getFirstName()/* + " " + arViewList.get(i).getLastName()*/, nextXofText[i], yPosition, true, true, i);
                 coordinateArray[i][0] = nextXofText[i];
                 coordinateArray[i][1] = (int) yPosition;
 
@@ -438,18 +444,16 @@ public class DataView {
 
                 nextXofText[i] = (int) ((displayMetrics.widthPixels / 2) + (angleToShift * degreetopixelWidth));
                 if (Math.abs(coordinateArray[i][0] - nextXofText[i]) > 50) {
-                    radarText(dw, arViewList.get(i).getFirstName() + " " + arViewList.get(i).getLastName(), (nextXofText[i]), yPosition, true, true, i);
+                    radarText(dw, arViewList.get(i).getFirstName() /*+ " " + arViewList.get(i).getLastName()*/, (nextXofText[i]), yPosition, true, true, i);
                     coordinateArray[i][0] = (int) ((displayMetrics.widthPixels / 2) + (angleToShift * degreetopixelWidth));
                     coordinateArray[i][1] = (int) yPosition;
 
                     isDrawing = true;
                 } else {
-                    radarText(dw, arViewList.get(i).getFirstName() + " " + arViewList.get(i).getLastName(), coordinateArray[i][0], yPosition, true, true, i);
+                    radarText(dw, arViewList.get(i).getFirstName() /*+ " " + arViewList.get(i).getLastName()*/, coordinateArray[i][0], yPosition, true, true, i);
                     isDrawing = false;
                 }
             }
         }
     }
-
-
 }

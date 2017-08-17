@@ -30,9 +30,9 @@
     <string name="str_view_all_offers">View all offers</string>
     <string name="str_login_failed">Login failed</string>
 
-    <string name="str_hint_frist_name">First Name</string>
-    <string name="str_hint_last_name">Last Name</string>
-    <string name="str_hint_email">Email</string>
+   <!-- <string name="str_hint_frist_name">First Name</string>-->
+   <!-- <string name="str_hint_last_name">Last Name</string>-->
+    <!--<string name="str_hint_email">Email</string>-->
     <string name="str_general_condition">condition</string>
     <string name="str_header">Create An Account</string>
     <string name="str_condition">By Creating Your Account.You Accept</string>
@@ -83,7 +83,7 @@
     <string name="str_profile_info">Profile Information</string>
 
 
-    <string name="Time_Remaning">Time Remaning:</string>
+   <!-- <string name="Time_Remaning">Time Remaning:</string>-->
     <string name="My_Offer">My Offer</string>
     <string name="str_select_profile_photo">Select photo</string>
     <string name="str_camera">Camera</string>
@@ -96,8 +96,8 @@
     <string name="login_with_facebook">Login with Facebook</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
-    <string name="email">Email</string>
-    <string name="password">Password</string>
+    <!--<string name="email">Email</string>-->
+    <!--<string name="password">Password</string>-->
     <string name="create_account">Create account</string>
     <string name="ok">OK</string>
     <string name="current_offers">Current Offers</string>
@@ -255,4 +255,14 @@
     <string name="you_will_rewarded_video_points">you will be rewarded Points very soon</string>
     <string name="crash_toast_text">Acra crash</string>
     <string name="can_not_post_offer">You cannot post an offer on your own post</string>
+    <string name="str_error_doing_payment">Error while doing payment</string>
+    <string name="payment_failed_stripe">Payment failed… please try again later</string>
+
+    <string name="restart_application">Restart Application</string>
+    <string name="for_language_change_restart_application">Need to restart the Application to do effect of language change</string>
+    <string name="clear_chat">clear chat</string>
+    <string name="delete_chat">Delete chat</string>
+    <string name="leave_group">Leave Group</string>
+    <string name="delete_group">Delete Group</string>
+
 </resources>

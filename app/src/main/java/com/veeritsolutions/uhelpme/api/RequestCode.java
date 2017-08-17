@@ -77,7 +77,10 @@ public enum RequestCode {
     ClientRadiusUpdate(null),
     ClientWatchVideo(LoginUserModel.class),
     SendEmail(null),
-    ForgotPassword(LoginUserModel.class);
+    ForgotPassword(LoginUserModel.class),
+    ChatGroupMemberLeave(null),
+    ChatGroupMemberDelete(null),
+    ChatUserDelete(null);
 
 
     Class mLocalClass;

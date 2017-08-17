@@ -15,7 +15,6 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-
     </style>
 
     <!--custom dialog style-->
@@ -43,9 +42,15 @@
         <item name="@android:windowExitAnimation">@anim/dialog_out</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+        <item name="android:textColorSecondary">@color/Black</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="android:textColorSecondary">@color/Black</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+    </style>
 
 
     <style name="buttonStyle" parent="AppTheme">
@@ -115,8 +120,8 @@
 
     <style name="customRatingBar" parent="@style/Widget.AppCompat.RatingBar.Small">
         <item name="android:progressDrawable">@drawable/drw_profile_rating</item>
-        <item name="android:minHeight">30dp</item>
-        <item name="android:maxHeight">30dp</item>
+       <!-- <item name="android:minHeight">30dp</item>
+        <item name="android:maxHeight">30dp</item>-->
     </style>
 
     <style name="ReviewRatingBar" parent="@android:style/Widget.RatingBar">

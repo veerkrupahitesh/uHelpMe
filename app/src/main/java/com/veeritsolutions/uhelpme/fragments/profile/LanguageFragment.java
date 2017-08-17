@@ -1,5 +1,6 @@
 package com.veeritsolutions.uhelpme.fragments.profile;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -8,6 +9,7 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,7 +120,7 @@ public class LanguageFragment extends Fragment implements OnClickEvent, OnBackPr
                 PrefHelper.getInstance().setString(PrefHelper.LANGUAGE, lang);
                 imgEnglish.setColorFilter(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
                 imgFrench.setColorFilter(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-
+                showLanguageDialog();
                 Configuration config = profileActivity.getBaseContext().getResources().getConfiguration();
                 if (!"".equals(lang) && !config.locale.getLanguage().equals(lang)) {
                     Locale locale = new Locale(lang);
@@ -133,21 +135,21 @@ public class LanguageFragment extends Fragment implements OnClickEvent, OnBackPr
                     }
                     //  profileActivity.recreate();
                 }
-                reload();
+                // reload();
                 break;
 
 
             case R.id.img_french:
                 Utils.buttonClickEffect(view);
-                lang = "fr";
-                PrefHelper.getInstance().setString(PrefHelper.LANGUAGE, lang);
+                String  language = "fr";
+                PrefHelper.getInstance().setString(PrefHelper.LANGUAGE, language);
                 imgEnglish.setColorFilter(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
                 imgFrench.setColorFilter(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
-
+                showLanguageDialog();
                 config = profileActivity.getBaseContext().getResources().getConfiguration();
 
-                if (!"".equals(lang) && !config.locale.getLanguage().equals(lang)) {
-                    Locale locale = new Locale(lang);
+                if (!"".equals(language) && !config.locale.getLanguage().equals(language)) {
+                    Locale locale = new Locale(language);
                     Locale.setDefault(locale);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                         config.setLocale(locale);
@@ -159,7 +161,7 @@ public class LanguageFragment extends Fragment implements OnClickEvent, OnBackPr
                     }
                     // profileActivity.recreate();
                 }
-                reload();
+                //  reload();
                 break;
         }
     }
@@ -169,6 +171,33 @@ public class LanguageFragment extends Fragment implements OnClickEvent, OnBackPr
         Intent homeIntent = new Intent(getActivity(), HomeActivity.class);
         homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
         startActivity(homeIntent);
+    }
+
+    public void showLanguageDialog() {
+        final AlertDialog.Builder builder;
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        builder = new AlertDialog.Builder(profileActivity, R.style.dialogStyle);
+        //  } else {
+        //      builder = new AlertDialog.Builder(profileActivity);
+        //  }
+        // builder.create();
+        builder.setTitle(getString(R.string.restart_application));
+        builder.setMessage(R.string.for_language_change_restart_application);
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+                reload();
+            }
+        });
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 }
 

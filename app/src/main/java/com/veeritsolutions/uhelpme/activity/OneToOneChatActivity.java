@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.veeritsolutions.uhelpme.MyApplication;
@@ -25,6 +28,7 @@ import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
 import com.veeritsolutions.uhelpme.api.ServerConfig;
 import com.veeritsolutions.uhelpme.helper.PrefHelper;
+import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
 import com.veeritsolutions.uhelpme.models.ChatModel;
@@ -143,16 +147,20 @@ public class OneToOneChatActivity extends AppCompatActivity implements OnClickEv
         switch (mRequestCode) {
 
             case ChatUserInsert:
-                PrefHelper.getInstance().setString(
+               /* PrefHelper.getInstance().setString(
                         loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId(),
-                        loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId());
+                        loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId());*/
+                break;
+
+            case ChatUserDelete:
+                finish();
                 break;
         }
     }
 
     @Override
     public void onFailure(RequestCode mRequestCode, String mError) {
-
+        ToastHelper.getInstance().showMessage(mError);
     }
 
     @Override
@@ -190,18 +198,68 @@ public class OneToOneChatActivity extends AppCompatActivity implements OnClickEv
 
             String str = loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId();
 
-            if (!PrefHelper.getInstance().containKey(str)) {
+            // if (!PrefHelper.getInstance().containKey(str)) {
 
-                Map<String, String> params = new HashMap<>();
-                params.put("op", ApiList.CHAT_USER_INSERT);
-                params.put("AuthKey", ApiList.AUTH_KEY);
-                params.put("ClientId", String.valueOf(loginUserModel.getClientId()));
-                params.put("ToClientId", String.valueOf(specificCategoryChatListModel.getId()));
+            Map<String, String> params = new HashMap<>();
+            params.put("op", ApiList.CHAT_USER_INSERT);
+            params.put("AuthKey", ApiList.AUTH_KEY);
+            params.put("ClientId", String.valueOf(loginUserModel.getClientId()));
+            params.put("ToClientId", String.valueOf(specificCategoryChatListModel.getId()));
 
-                RestClient.getInstance().post(this, Request.Method.POST, params, ApiList.CHAT_USER_INSERT,
-                        false, RequestCode.ChatUserInsert, this);
-            }
+            RestClient.getInstance().post(this, Request.Method.POST, params, ApiList.CHAT_USER_INSERT,
+                    false, RequestCode.ChatUserInsert, this);
+            // }
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.one_to_one_chat_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.menu_clearChat:
+                databaseReferenceOne.removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseError == null) {
+                            adpChat = new AdpOneToOneChat(databaseReferenceOne, OneToOneChatActivity.this);
+                            //databaseReferenceOne.removeValue();
+                            recyclerViewChat.setAdapter(adpChat);
+                        }
+                    }
+                });
+                break;
+
+            case R.id.menu_deleteChat:
+
+                databaseReferenceOne.removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseError == null) {
+                            deleteChat();
+                        }
+                    }
+                });
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteChat() {
+
+        Map<String, String> params = new HashMap<>();
+        params.put("op", ApiList.CHAT_USER_DELETE);
+        params.put("AuthKey", ApiList.AUTH_KEY);
+        params.put("ClientId", String.valueOf(loginUserModel.getClientId()));
+        params.put("ToClientId", String.valueOf(specificCategoryChatListModel.getId()));
+
+        RestClient.getInstance().post(this, Request.Method.POST, params, ApiList.CHAT_USER_DELETE,
+                true, RequestCode.ChatUserDelete, this);
+    }
 }

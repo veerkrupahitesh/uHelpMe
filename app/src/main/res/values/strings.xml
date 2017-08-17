@@ -270,4 +270,11 @@
     <string name="can_not_post_offer">You cannot post an offer on your own post</string>
     <string name="str_error_doing_payment">Error while doing payment</string>
     <string name="payment_failed_stripe">Payment failed… please try again later</string>
+
+    <string name="restart_application">Restart Application</string>
+    <string name="for_language_change_restart_application">Need to restart the Application to do effect of language change</string>
+    <string name="clear_chat">clear chat</string>
+    <string name="delete_chat">Delete chat</string>
+    <string name="leave_group">Leave Group</string>
+    <string name="delete_group">Delete Group</string>
 </resources>

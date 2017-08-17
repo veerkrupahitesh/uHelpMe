@@ -107,4 +107,10 @@ public class ApiList {
     public static final String CLIENT_WATCH_VIDEO_POINTS = "ClientWatchVideoCreditPointAdd";
 
     public static final String FORGOT_PASSWORD = "ForgotPassword";
+
+    public static String CHAT_GROUP_MEMBER_LEAVE = "ChatGroupMemberLeave";
+
+    public static String CHAT_GROUP_MEMBER_DELETE = "ChatGroupMemberDelete";
+
+    public static String CHAT_USER_DELETE = "ChatUserDelete";
 }

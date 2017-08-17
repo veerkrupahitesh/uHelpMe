@@ -30,9 +30,9 @@
     <string name="str_view_all_offers">Voir toutes les offres</string>
     <string name="str_login_failed">Échec de la connexion</string>
 
-    <string name="str_hint_frist_name">Prénom</string>
-    <string name="str_hint_last_name">Nom de famille</string>
-    <string name="str_hint_email">Email</string>
+<!--    <string name="str_hint_frist_name">Prénom</string>-->
+   <!-- <string name="str_hint_last_name">Nom de famille</string>-->
+<!--    <string name="str_hint_email">Email</string>-->
     <string name="str_general_condition">condition</string>
     <string name="str_header">Créer un compte</string>
     <string name="str_condition">En créant votre compte. Vous acceptez</string>
@@ -95,7 +95,7 @@
           <item>Femelle</item>
       </string-array>
   -->
-    <string name="Time_Remaning">Temps restant:</string>
+<!--    <string name="Time_Remaning">Temps restant:</string>-->
     <string name="My_Offer">Mon offre</string>
     <string name="str_select_profile_photo">Sélectionnez une photo</string>
     <string name="str_camera">Caméra</string>
@@ -108,8 +108,8 @@
     <string name="login_with_facebook">Se connecter avec Facebook</string>
     <string name="first_name">Prénom</string>
     <string name="last_name">Nom de famille</string>
-    <string name="email">Email</string>
-    <string name="password">Mot de passe</string>
+<!--    <string name="email">Email</string>-->
+  <!--  <string name="password">Mot de passe</string>-->
     <string name="create_account">Créer un compte</string>
     <string name="ok">D\'accord</string>
     <string name="current_offers">Offres actuelles</string>
@@ -269,4 +269,15 @@
     <string name="you_will_rewarded_video_points">Vous serez récompensé Points très bientôt</string>
     <string name="crash_toast_text">Acra crash</string>
     <string name="can_not_post_offer">Vous ne pouvez pas poster une offre sur votre propre publication</string>
+
+    <string name="str_error_doing_payment">Erreur lors du paiement</string>
+    <string name="payment_failed_stripe">Le paiement a échoué … essayez de nouveau plus tard</string>
+
+    <string name="restart_application">Recommencer l\'application</string>
+    <string name="for_language_change_restart_application">Nécessité de redémarrer l\'application pour effectuer un changement de langue</string>
+
+    <string name="clear_chat">Conversation claire</string>
+    <string name="delete_chat">Supprimer le chat</string>
+    <string name="leave_group">Quitter le groupe</string>
+    <string name="delete_group">Supprimer le groupe</string>
 </resources>

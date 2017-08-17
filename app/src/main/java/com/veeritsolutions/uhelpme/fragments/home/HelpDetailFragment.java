@@ -221,7 +221,7 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
                 .load(postedJobModel.getCategoryIcon1())
                 .error(R.drawable.img_pin_blue)
                 .placeholder(R.drawable.img_pin_blue)
-                .override(imgCategoryIcon.getWidth(), imgCategoryIcon.getHeight())
+                .override(90, 120)
                 // .transform(new BlurTransformation(homeActivity))
                 .into(imgCategoryIcon);
 

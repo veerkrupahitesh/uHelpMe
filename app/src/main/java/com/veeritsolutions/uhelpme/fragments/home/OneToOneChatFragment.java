@@ -5,9 +5,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.veeritsolutions.uhelpme.MyApplication;
@@ -29,6 +34,7 @@ import com.veeritsolutions.uhelpme.api.RestClient;
 import com.veeritsolutions.uhelpme.api.ServerConfig;
 import com.veeritsolutions.uhelpme.fragments.profile.OtherPersonProfileFragment;
 import com.veeritsolutions.uhelpme.helper.PrefHelper;
+import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
 import com.veeritsolutions.uhelpme.models.ChatModel;
@@ -52,6 +58,7 @@ public class OneToOneChatFragment extends Fragment implements OnClickEvent, OnBa
     private Button btnSend;
     private TextView tvHeader;
     private ImageView imgProfilePic;
+    private Toolbar toolbar;
 
     private HomeActivity homeActivity;
     private AdpOneToOneChat adpChat;
@@ -67,6 +74,7 @@ public class OneToOneChatFragment extends Fragment implements OnClickEvent, OnBa
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         homeActivity = (HomeActivity) getActivity();
 
         loginUserModel = LoginUserModel.getLoginUserModel();
@@ -89,7 +97,8 @@ public class OneToOneChatFragment extends Fragment implements OnClickEvent, OnBa
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_one_to_one_chat, container, false);
-
+        toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        homeActivity.setSupportActionBar(toolbar);
         tvHeader = (TextView) rootView.findViewById(R.id.tv_headerTitle);
         tvHeader.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
         tvHeader.setText(specificCategoryChatListModel.getName());
@@ -144,6 +153,7 @@ public class OneToOneChatFragment extends Fragment implements OnClickEvent, OnBa
         });
 
         adpChat = new AdpOneToOneChat(databaseReferenceOne, homeActivity);
+        //databaseReferenceOne.removeValue();
         recyclerViewChat.setAdapter(adpChat);
         recyclerViewChat.setAddStatesFromChildren(true);
 
@@ -200,17 +210,17 @@ public class OneToOneChatFragment extends Fragment implements OnClickEvent, OnBa
 
             String str = loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId();
 
-            if (!PrefHelper.getInstance().containKey(str)) {
+            // if (!PrefHelper.getInstance().containKey(str)) {
 
-                Map<String, String> params = new HashMap<>();
-                params.put("op", ApiList.CHAT_USER_INSERT);
-                params.put("AuthKey", ApiList.AUTH_KEY);
-                params.put("ClientId", String.valueOf(loginUserModel.getClientId()));
-                params.put("ToClientId", String.valueOf(specificCategoryChatListModel.getId()));
+            Map<String, String> params = new HashMap<>();
+            params.put("op", ApiList.CHAT_USER_INSERT);
+            params.put("AuthKey", ApiList.AUTH_KEY);
+            params.put("ClientId", String.valueOf(loginUserModel.getClientId()));
+            params.put("ToClientId", String.valueOf(specificCategoryChatListModel.getId()));
 
-                RestClient.getInstance().post(homeActivity, Request.Method.POST, params, ApiList.CHAT_USER_INSERT,
-                        false, RequestCode.ChatUserInsert, this);
-            }
+            RestClient.getInstance().post(homeActivity, Request.Method.POST, params, ApiList.CHAT_USER_INSERT,
+                    false, RequestCode.ChatUserInsert, this);
+            //  }
         }
     }
 
@@ -220,15 +230,79 @@ public class OneToOneChatFragment extends Fragment implements OnClickEvent, OnBa
         switch (mRequestCode) {
 
             case ChatUserInsert:
-                PrefHelper.getInstance().setString(
+               /* PrefHelper.getInstance().setString(
                         loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId(),
-                        loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId());
+                        loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId());*/
+                break;
+
+            case ChatUserDelete:
+                homeActivity.popBackFragment();
                 break;
         }
     }
 
     @Override
     public void onFailure(RequestCode mRequestCode, String mError) {
+        ToastHelper.getInstance().showMessage(mError);
+    }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.one_to_one_chat_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case R.id.menu_clearChat:
+                databaseReferenceOne.removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseError == null) {
+                            adpChat = new AdpOneToOneChat(databaseReferenceOne, homeActivity);
+                            //databaseReferenceOne.removeValue();
+                            recyclerViewChat.setAdapter(adpChat);
+                        }
+                    }
+                });
+                break;
+
+            case R.id.menu_deleteChat:
+
+                databaseReferenceOne.removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseError == null) {
+                            deleteChat();
+                        }
+                    }
+                });
+                break;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteChat() {
+
+        Map<String, String> params = new HashMap<>();
+        params.put("op", ApiList.CHAT_USER_DELETE);
+        params.put("AuthKey", ApiList.AUTH_KEY);
+        params.put("ClientId", String.valueOf(loginUserModel.getClientId()));
+        params.put("ToClientId", String.valueOf(specificCategoryChatListModel.getId()));
+
+        RestClient.getInstance().post(homeActivity, Request.Method.POST, params, ApiList.CHAT_USER_DELETE,
+                true, RequestCode.ChatUserDelete, this);
     }
 }

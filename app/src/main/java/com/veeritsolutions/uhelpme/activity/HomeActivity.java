@@ -19,6 +19,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -175,7 +177,7 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
             if (mGoogleApiClient.isConnected())
                 startLocationUpdates();
         }
-        Configuration config = getBaseContext().getResources().getConfiguration();
+        /*Configuration config = getBaseContext().getResources().getConfiguration();
         if (!"".equals(lang) && !config.locale.getLanguage().equals(lang)) {
             Locale locale = new Locale(lang);
             Locale.setDefault(locale);
@@ -188,7 +190,7 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
                 getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
             }
             //  profileActivity.recreate();
-        }
+        }*/
     }
 
     @Override
@@ -210,8 +212,18 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        String str = PrefHelper.getInstance().getString(PrefHelper.LANGUAGE, "en");
-        super.attachBaseContext(MyContextWrapper.wrap(newBase, str));
+        if (PrefHelper.getInstance().containKey(PrefHelper.LANGUAGE)) {
+            String str = PrefHelper.getInstance().getString(PrefHelper.LANGUAGE, "en");
+            super.attachBaseContext(MyContextWrapper.wrap(newBase, str));
+            return;
+        }
+        super.attachBaseContext(newBase);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        recreate();
+        super.onConfigurationChanged(newConfig);
     }
 
     private void init() {

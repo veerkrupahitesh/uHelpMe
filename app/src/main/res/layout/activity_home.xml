@@ -13,10 +13,10 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-
         </FrameLayout>
 
         <LinearLayout
+            android:background="@android:color/white"
             android:id="@+id/lin_homeFooter"
             android:layout_width="match_parent"
             android:layout_height="65dp"
@@ -41,8 +41,9 @@
 
                 <TextView
                     android:id="@+id/tv_home"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/home"
                     android:textSize="10sp" />
             </LinearLayout>
@@ -63,8 +64,9 @@
                     android:src="@drawable/img_search_tabbar_active" />
 
                 <TextView
+                    android:gravity="center"
                     android:id="@+id/tv_search"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/search"
                     android:textSize="10sp" />
@@ -95,8 +97,9 @@
                     android:src="@drawable/img_dashboard_active" />
 
                 <TextView
+                    android:gravity="center"
                     android:id="@+id/tv_dashBoard"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/dashboard"
                     android:textSize="10sp" />
@@ -118,8 +121,9 @@
                     android:src="@drawable/img_chat_room_active" />
 
                 <TextView
+                    android:gravity="center"
                     android:id="@+id/tv_chatRoom"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/chatroom"
                     android:textSize="10sp" />
