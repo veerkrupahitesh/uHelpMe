@@ -1,18 +1,12 @@
 package com.veeritsolutions.uhelpme.arview;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.location.Location;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,16 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
-import com.veeritsolutions.uhelpme.activity.HomeActivity;
 import com.veeritsolutions.uhelpme.activity.OtherPersonProfileActivity;
-import com.veeritsolutions.uhelpme.fragments.profile.OtherPersonProfileFragment;
 import com.veeritsolutions.uhelpme.helper.PrefHelper;
-import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.models.ARViewModel;
 import com.veeritsolutions.uhelpme.models.LoginUserModel;
 import com.veeritsolutions.uhelpme.utility.Constants;
@@ -42,69 +32,62 @@ import java.util.ArrayList;
 
 public class DataView {
 
+    //   private double[] latitudes = ARView._latitude;
+    //private double[] longitudes = ARView._longitude;
+    public ArrayList<ARViewModel> arViewList = ARView.arViewList;
+    public float addX = 0, addY = 0;
+    ArrayList<Integer> nextYofText = new ArrayList<Integer>();
+    boolean isFirstEntry;
+    int[][] coordinateArray = new int[20][2];
     private LinearLayout[] locationMarkerView;
     private RelativeLayout.LayoutParams[] layoutParams;
     private RelativeLayout.LayoutParams[] subjectImageViewParams;
     private RelativeLayout.LayoutParams[] subjectTextViewParams;
     private TextView[] locationTextView;
-
-
-    //   private double[] latitudes = ARView._latitude;
-    //private double[] longitudes = ARView._longitude;
-    public ArrayList<ARViewModel> arViewList = ARView.arViewList;
     private int[] nextXofText;
-    ArrayList<Integer> nextYofText = new ArrayList<Integer>();
     private double[] bearings;
     private float angleToShift;
-    private float yPosition;
-    private Location currentLocation = new Location("provider");
-    private Location destinedLocation = new Location("provider");
 
     // String[] places = ARView._name;
     //  String[] distance = ARView._distance;
     //  String[] photoUrl = ARView._photoUrl;
     // String[] colorCode = ARView._colorCode;
     // float[] ratings = ARView._ratings;
+    private float yPosition;
+    private Location currentLocation = new Location("provider");
+    private Location destinedLocation = new Location("provider");
     /**
      * is the dataView Inited?
      */
     private boolean isInit = false;
     private boolean isDrawing = true;
-    boolean isFirstEntry;
     private Context _context;
     /**
      * width and height of the dataView
      */
     private int width, height;
     private android.hardware.Camera camera;
-
     private float yawPrevious;
     private float yaw = 0;
     private float pitch = 0;
     private float roll = 0;
-
     private DisplayMetrics displayMetrics;
     private RadarView radarPoints;
-
     private RadarLines lrl = new RadarLines();
     private RadarLines rrl = new RadarLines();
     private float rx = 10, ry = 20;
-    public float addX = 0, addY = 0;
     private float degreetopixelWidth;
     private float degreetopixelHeight;
     private float pixelstodp;
     private float bearing;
-
-    int[][] coordinateArray = new int[20][2];
     private Bitmap bmp;
     // int position = 1;
+    private View rootView;
 
     DataView(Context ctx) {
         this._context = ctx;
 
     }
-
-    private View rootView;
 
     boolean isInited() {
         return isInit;
@@ -386,7 +369,7 @@ public class DataView {
 
             if (isLocationBlock) {
                 layoutParams[count].setMargins((int) (x - w / 2 - 10), (int) (y - h / 2 - 10), 0, 0);
-                 layoutParams[count].height = 500;
+                layoutParams[count].height = 500;
                 layoutParams[count].width = 2000;
                 locationMarkerView[count].setLayoutParams(layoutParams[count]);
 

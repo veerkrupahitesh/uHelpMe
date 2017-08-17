@@ -32,7 +32,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textColor="@color/Black"
-                android:textSize="13sp" />
+                android:textSize="10sp" />
 
             <TextView
                 android:id="@+id/tv_distance"
@@ -41,7 +41,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/colorHint"
-                android:textSize="12sp" />
+                android:textSize="10sp" />
 
             <android.support.v7.widget.AppCompatRatingBar
                 android:id="@+id/rb_rating"
