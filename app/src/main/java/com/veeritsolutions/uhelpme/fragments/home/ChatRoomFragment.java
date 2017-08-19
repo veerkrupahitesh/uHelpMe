@@ -20,7 +20,6 @@ import com.veeritsolutions.uhelpme.api.ApiList;
 import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
-import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
@@ -53,15 +52,14 @@ public class ChatRoomFragment extends Fragment implements OnClickEvent, OnBackPr
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        homeActivity = (HomeActivity) getActivity();
-
-        loginUserModel = LoginUserModel.getLoginUserModel();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        homeActivity = (HomeActivity) getActivity();
+        loginUserModel = LoginUserModel.getLoginUserModel();
 
         homeActivity.imgHome.setImageResource(R.drawable.img_home_inactive);
         homeActivity.imgSearch.setImageResource(R.drawable.img_search_tabbar_inactive);
