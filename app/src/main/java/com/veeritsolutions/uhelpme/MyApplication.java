@@ -14,6 +14,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.maps.MapsInitializer;
 import com.veeritsolutions.uhelpme.utility.Constants;
 import com.veeritsolutions.uhelpme.utility.Debug;
 import com.veeritsolutions.uhelpme.utility.ExceptionHandler;
@@ -30,19 +31,10 @@ import io.fabric.sdk.android.Fabric;
         resToastText = R.string.crash_toast_text)*/
 public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
-    //private final Context mContext;
-    private final String LINE_SEPARATOR = "\n";
-    String response;
-
     public static final String TAG = MyApplication.class.getSimpleName();
-    public boolean isAppRunnning;
-    private static MyApplication mInstance;
-    public final int VOLLEY_TIMEOUT = 60000;
-    public Typeface FONT_WORKSANS_MEDIUM, FONT_WORKSANS_REGULAR, FONT_WORKSANS_LIGHT;
-    private RequestQueue mRequestQueue;
-
     @SuppressLint("StaticFieldLeak")
     public static Activity currentActivity;
+    private static MyApplication mInstance;
     // If you want a static function you can use to check if your application is
     // foreground/background, you can use the following:
     // Replace the four variables above with these four
@@ -50,6 +42,13 @@ public class MyApplication extends Application implements Application.ActivityLi
     private static int paused;
     private static int started;
     private static int stopped;
+    public final int VOLLEY_TIMEOUT = 60000;
+    //private final Context mContext;
+    private final String LINE_SEPARATOR = "\n";
+    public boolean isAppRunnning;
+    public Typeface FONT_WORKSANS_MEDIUM, FONT_WORKSANS_REGULAR, FONT_WORKSANS_LIGHT;
+    String response;
+    private RequestQueue mRequestQueue;
 
     public static Activity getCurrentActivity() {
         return currentActivity;
@@ -68,11 +67,16 @@ public class MyApplication extends Application implements Application.ActivityLi
         return paused > resumed;
     }
 
+    public static synchronized MyApplication getInstance() {
+        return mInstance;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         mInstance = this;
+        MapsInitializer.initialize(this);
         isAppRunnning = true;
         FONT_WORKSANS_MEDIUM = getTypeFace(Constants.FONT_WORKSANS_MEDIUM);
         FONT_WORKSANS_REGULAR = getTypeFace(Constants.FONT_WORKSANS_REGULAR);
@@ -85,10 +89,6 @@ public class MyApplication extends Application implements Application.ActivityLi
     public void onTerminate() {
         super.onTerminate();
         //   isAppRunnning = false;
-    }
-
-    public static synchronized MyApplication getInstance() {
-        return mInstance;
     }
 
     public Typeface getTypeFace(String typeFaceName) {

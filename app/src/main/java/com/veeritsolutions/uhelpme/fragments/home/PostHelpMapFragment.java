@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -36,7 +36,6 @@ import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
-import com.veeritsolutions.uhelpme.utility.Constants;
 import com.veeritsolutions.uhelpme.utility.PermissionClass;
 import com.veeritsolutions.uhelpme.utility.Utils;
 
@@ -51,13 +50,13 @@ import static android.app.Activity.RESULT_OK;
 
 public class PostHelpMapFragment extends Fragment implements OnClickEvent, DataObserver, OnBackPressedEvent, OnMapReadyCallback {
 
+    int PLACE_PICKER_REQUEST = 1;
     private View rootView;
     private TextView tvUhelpMe, tvYourLocation, tvLocation;
     private FrameLayout mapFrameLayout;
     private Button btnNextStep;
-
+    private MapView mMapView;
     private GoogleMap mGoogleMap;
-
     // object and variable declaration
     private HomeActivity homeActivity;
     private SupportMapFragment spFragment;
@@ -65,7 +64,6 @@ public class PostHelpMapFragment extends Fragment implements OnClickEvent, DataO
     private Bundle bundle;
     private View view;
     private PlacePicker.IntentBuilder builder;
-    int PLACE_PICKER_REQUEST = 1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,23 +80,23 @@ public class PostHelpMapFragment extends Fragment implements OnClickEvent, DataO
 
         rootView = inflater.inflate(R.layout.fragment_post_help_location, container, false);
 
-        if (view != null) {
-            ViewGroup parent = (ViewGroup) view.getParent();
-            if (parent != null)
-                parent.removeView(view);
-        }
-        try {
-            view = inflater.inflate(R.layout.map, container, false);
-        } catch (InflateException e) {
-        /* map is already there, just return dataView as it is */
-        }
-
-        mapFrameLayout = (FrameLayout) rootView.findViewById(R.id.map_framelayout);
-        mapFrameLayout.addView(view);
-
-        spFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
-
-        spFragment.getMapAsync(this);
+//        if (view != null) {
+//            ViewGroup parent = (ViewGroup) view.getParent();
+//            if (parent != null)
+//                parent.removeView(view);
+//        }
+//        try {
+//            view = inflater.inflate(R.layout.map, container, false);
+//        } catch (InflateException e) {
+//        /* map is already there, just return dataView as it is */
+//        }
+//
+//        mapFrameLayout = (FrameLayout) rootView.findViewById(R.id.map_framelayout);
+//        mapFrameLayout.addView(view);
+//
+//        spFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
+//
+//        spFragment.getMapAsync(this);
 
         tvUhelpMe = (TextView) rootView.findViewById(R.id.txv_show);
         tvUhelpMe.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
@@ -123,6 +121,11 @@ public class PostHelpMapFragment extends Fragment implements OnClickEvent, DataO
 
         btnNextStep = (Button) rootView.findViewById(R.id.btn_next_help);
         btnNextStep.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
+
+        mMapView = (MapView) rootView.findViewById(R.id.map);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();// needed to get the map to display immediately
+        mMapView.getMapAsync(this);
 
         return rootView;
 
@@ -221,7 +224,8 @@ public class PostHelpMapFragment extends Fragment implements OnClickEvent, DataO
                     //  permissions[i] = Manifest.permission.CAMERA; //for specific permission check
                     grantResults[i] = PackageManager.PERMISSION_DENIED;
                     shouldPermit.add(permissions[i]);
-                    if (permissions[i] == Manifest.permission.ACCESS_COARSE_LOCATION && permissions[i] == Manifest.permission.ACCESS_FINE_LOCATION) {
+                    if (permissions[i] == Manifest.permission.ACCESS_COARSE_LOCATION
+                            && permissions[i] == Manifest.permission.ACCESS_FINE_LOCATION) {
                         mGoogleMap.setMyLocationEnabled(true);
                     }
                 }

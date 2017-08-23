@@ -14,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,7 @@ import com.android.volley.Request;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -68,6 +68,7 @@ public class SearchFragment extends Fragment implements OnClickEvent, OnBackPres
     private RelativeLayout mapFrameLayout;
     private ImageView imgBackHeader, imgCamera;
     private FloatingActionButton fabRefresh;
+    private MapView mMapView;
 
     private SupportMapFragment spFragment;
     private float latitude, longitude;
@@ -104,19 +105,19 @@ public class SearchFragment extends Fragment implements OnClickEvent, OnBackPres
         rootView = inflater.inflate(R.layout.fragment_search, container, false);
         imgBackHeader = (ImageView) rootView.findViewById(R.id.img_back_header);
         imgBackHeader.setVisibility(View.GONE);
-        // fabRefresh = (FloatingActionButton) rootView.findViewById(R.id.fab_refresh);
-        fabRefresh = new FloatingActionButton(homeActivity);
-        fabRefresh.setImageResource(R.drawable.drw_autorenew_black_24dp);
-        fabRefresh.setRippleColor(Color.WHITE);
-        //fabRefresh.setPadding(0, 80, 0, 0);
-        fabRefresh.setUseCompatPadding(true);
-        fabRefresh.setLeft(10);
-        fabRefresh.setTop(10);
-
-        // fabRefresh.setRotation(360);
-        fabRefresh.setSize(FloatingActionButton.SIZE_MINI);
+        fabRefresh = (FloatingActionButton) rootView.findViewById(R.id.fab_refresh);
+//        fabRefresh = new FloatingActionButton(homeActivity);
+//        fabRefresh.setImageResource(R.drawable.drw_autorenew_black_24dp);
+//        fabRefresh.setRippleColor(Color.WHITE);
+//        //fabRefresh.setPadding(0, 80, 0, 0);
+//        fabRefresh.setUseCompatPadding(true);
+//        fabRefresh.setLeft(10);
+//        fabRefresh.setTop(10);
+//
+//        // fabRefresh.setRotation(360);
+//        fabRefresh.setSize(FloatingActionButton.SIZE_MINI);
         imgCamera = (ImageView) rootView.findViewById(R.id.img_camera);
-        if (view != null) {
+        /*if (view != null) {
             ViewGroup parent = (ViewGroup) view.getParent();
             if (parent != null)
                 parent.removeView(view);
@@ -124,8 +125,8 @@ public class SearchFragment extends Fragment implements OnClickEvent, OnBackPres
         try {
             view = inflater.inflate(R.layout.map, container, false);
         } catch (InflateException e) {
-        /* map is already there, just return dataView as it is */
-        }
+        *//* map is already there, just return dataView as it is *//*
+        }*/
         mapFrameLayout = (RelativeLayout) rootView.findViewById(R.id.map_framelayout);
         // mapFrameLayout.setPadding(0, 80, 0, 0);
         // LinearLayout.LayoutParams relativeParams = (LinearLayout.LayoutParams) mapFrameLayout.getLayoutParams();
@@ -133,11 +134,15 @@ public class SearchFragment extends Fragment implements OnClickEvent, OnBackPres
         //mapFrameLayout.setLayoutParams(relativeParams);
 
         //mapFrameLayout.setGravity(Gravity.BOTTOM);
-        mapFrameLayout.addView(view);
-        mapFrameLayout.addView(fabRefresh);
+//        mapFrameLayout.addView(view);
+//        mapFrameLayout.addView(fabRefresh);
 
-        spFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
-        spFragment.getMapAsync(this);
+       /* spFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
+        spFragment.getMapAsync(this);*/
+        mMapView = (MapView) rootView.findViewById(R.id.map);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();// needed to get the map to display immediately
+        mMapView.getMapAsync(this);
 
         fabRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -384,7 +389,7 @@ public class SearchFragment extends Fragment implements OnClickEvent, OnBackPres
                         .icon(BitmapDescriptorFactory.fromBitmap(result)))
                         .setTag(arViewModel[0]);
             } else {
-                result = BitmapFactory.decodeResource(getResources(),R.drawable.img_pin_blue);
+                result = BitmapFactory.decodeResource(getResources(), R.drawable.img_pin_blue);
                 result = Bitmap.createScaledBitmap(result, 70, 90, true);
                 mGoogleMap.addMarker(new MarkerOptions()
                         .position(new LatLng(arViewModel[0].getLatitude(), arViewModel[0].getLongitude()))

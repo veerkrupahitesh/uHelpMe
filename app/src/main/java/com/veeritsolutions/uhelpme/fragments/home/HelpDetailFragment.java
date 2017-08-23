@@ -12,7 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -43,9 +43,9 @@ import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
+import com.veeritsolutions.uhelpme.models.AllHelpOfferModel;
 import com.veeritsolutions.uhelpme.models.LoginUserModel;
 import com.veeritsolutions.uhelpme.models.PostedJobModel;
-import com.veeritsolutions.uhelpme.models.AllHelpOfferModel;
 import com.veeritsolutions.uhelpme.utility.BlurTransformation;
 import com.veeritsolutions.uhelpme.utility.Constants;
 import com.veeritsolutions.uhelpme.utility.PermissionClass;
@@ -73,11 +73,11 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
             tvBestOfferLabel, tvLocationLabel, tvHelpAmount;
     private Button btnVieAllOffer;
     private FrameLayout mapFrameLayout;
+    private MapView mMapView;
 
     private Map<String, String> params;
     private Bundle bundle;
     private PostedJobModel postedJobModel;
-
     private SupportMapFragment spFragment;
     private float latitude, longitude;
     private GoogleMap mGoogleMap;
@@ -104,19 +104,19 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
 
         rootView = inflater.inflate(R.layout.fragment_help_post_detail, container, false);
 
-        if (view != null) {
-            ViewGroup parent = (ViewGroup) view.getParent();
-            if (parent != null)
-                parent.removeView(view);
-        }
-        try {
-            view = inflater.inflate(R.layout.map, container, false);
-        } catch (InflateException e) {
-        /* map is already there, just return dataView as it is */
-        }
-
-        mapFrameLayout = (FrameLayout) rootView.findViewById(R.id.map_framelayout);
-        mapFrameLayout.addView(view);
+//        if (view != null) {
+//            ViewGroup parent = (ViewGroup) view.getParent();
+//            if (parent != null)
+//                parent.removeView(view);
+//        }
+//        try {
+//            view = inflater.inflate(R.layout.map, container, false);
+//        } catch (InflateException e) {
+//        /* map is already there, just return dataView as it is */
+//        }
+//
+//        mapFrameLayout = (FrameLayout) rootView.findViewById(R.id.map_framelayout);
+//        mapFrameLayout.addView(view);
         imgHelpBannerPic = (ImageView) rootView.findViewById(R.id.img_help_bannerPic);
         imgHelpPic = (ImageView) rootView.findViewById(R.id.img_help_ProfilePic);
 
@@ -148,6 +148,11 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
 
         btnVieAllOffer = (Button) rootView.findViewById(R.id.btn_view_all_offer);
         btnVieAllOffer.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+
+        mMapView = (MapView) rootView.findViewById(R.id.map);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();// needed to get the map to display immediately
+        mMapView.getMapAsync(this);
 
         return rootView;
     }
@@ -225,8 +230,8 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
                 // .transform(new BlurTransformation(homeActivity))
                 .into(imgCategoryIcon);
 
-        spFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
-        spFragment.getMapAsync(this);
+//        spFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
+//        spFragment.getMapAsync(this);
 
         if (mGoogleMap != null) {
 
@@ -410,6 +415,38 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
                 ApiList.GET_JOB_POST_DETAIL, true, RequestCode.GetPostedJobDetail, this);
     }
 
+    private void floodFill(Bitmap bmp, Point point, int targetColor, int newColor) {
+        Queue<Point> q = new LinkedList<Point>();
+        q.add(point);
+        while (q.size() > 0) {
+            Point n = q.poll();
+            if (bmp.getPixel(n.x, n.y) != targetColor)
+                continue;
+
+            Point w = n, e = new Point(n.x + 1, n.y);
+            while ((w.x > 0) && (bmp.getPixel(w.x, w.y) == targetColor)) {
+                bmp.setPixel(w.x, w.y, newColor);
+                if ((w.y > 0) && (bmp.getPixel(w.x, w.y - 1) == targetColor))
+                    q.add(new Point(w.x, w.y - 1));
+                if ((w.y < bmp.getHeight() - 1)
+                        && (bmp.getPixel(w.x, w.y + 1) == targetColor))
+                    q.add(new Point(w.x, w.y + 1));
+                w.x--;
+            }
+            while ((e.x < bmp.getWidth() - 1)
+                    && (bmp.getPixel(e.x, e.y) == targetColor)) {
+                bmp.setPixel(e.x, e.y, newColor);
+
+                if ((e.y > 0) && (bmp.getPixel(e.x, e.y - 1) == targetColor))
+                    q.add(new Point(e.x, e.y - 1));
+                if ((e.y < bmp.getHeight() - 1)
+                        && (bmp.getPixel(e.x, e.y + 1) == targetColor))
+                    q.add(new Point(e.x, e.y + 1));
+                e.x++;
+            }
+        }
+    }
+
     private class TheTask extends AsyncTask<PostedJobModel, Void, Bitmap> {
 
         PostedJobModel[] postedJobModel;
@@ -469,38 +506,6 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
 
             }
 */
-        }
-    }
-
-    private void floodFill(Bitmap bmp, Point point, int targetColor, int newColor) {
-        Queue<Point> q = new LinkedList<Point>();
-        q.add(point);
-        while (q.size() > 0) {
-            Point n = q.poll();
-            if (bmp.getPixel(n.x, n.y) != targetColor)
-                continue;
-
-            Point w = n, e = new Point(n.x + 1, n.y);
-            while ((w.x > 0) && (bmp.getPixel(w.x, w.y) == targetColor)) {
-                bmp.setPixel(w.x, w.y, newColor);
-                if ((w.y > 0) && (bmp.getPixel(w.x, w.y - 1) == targetColor))
-                    q.add(new Point(w.x, w.y - 1));
-                if ((w.y < bmp.getHeight() - 1)
-                        && (bmp.getPixel(w.x, w.y + 1) == targetColor))
-                    q.add(new Point(w.x, w.y + 1));
-                w.x--;
-            }
-            while ((e.x < bmp.getWidth() - 1)
-                    && (bmp.getPixel(e.x, e.y) == targetColor)) {
-                bmp.setPixel(e.x, e.y, newColor);
-
-                if ((e.y > 0) && (bmp.getPixel(e.x, e.y - 1) == targetColor))
-                    q.add(new Point(e.x, e.y - 1));
-                if ((e.y < bmp.getHeight() - 1)
-                        && (bmp.getPixel(e.x, e.y + 1) == targetColor))
-                    q.add(new Point(e.x, e.y + 1));
-                e.x++;
-            }
         }
     }
 }

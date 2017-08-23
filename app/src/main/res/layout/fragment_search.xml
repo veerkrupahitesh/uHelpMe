@@ -52,15 +52,22 @@
         android:layout_height="match_parent"
         android:background="@android:color/transparent">
 
-        <!--<android.support.design.widget.FloatingActionButton
-            android:onClick="onClick"
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map"
+            style="@style/mapStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white" />
+
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            app:fabSize="mini"
+            android:onClick="onClick"
             android:src="@drawable/drw_autorenew_black_24dp"
-            app:rippleColor="@android:color/white" />-->
+            app:fabSize="mini"
+            app:rippleColor="@android:color/white" />
     </RelativeLayout>
 </LinearLayout>

@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -38,22 +39,19 @@ import java.util.Map;
 public class ChangePwdFragment extends Fragment implements OnClickEvent, DataObserver, OnBackPressedEvent {
 
 
+    // private int loginUser;
+    LoginUserModel loginUserModel;
     // xml components
     private Toolbar toolbar;
     private TextView tvHeader;
     private Button btnSave;
     private EditText edtOldPwd, edtNewPwd, edtConfirmPwd;
-
     private String remark;
     private View rootView;
     private Bundle bundle;
-
     // object and variable declaration
     private JSONObject params;
     private ProfileActivity profileActivity;
-    // private int loginUser;
-    LoginUserModel loginUserModel;
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +60,8 @@ public class ChangePwdFragment extends Fragment implements OnClickEvent, DataObs
         profileActivity = (ProfileActivity) getActivity();
         bundle = getArguments();
         loginUserModel = LoginUserModel.getLoginUserModel();
+
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     }
 
     @Nullable

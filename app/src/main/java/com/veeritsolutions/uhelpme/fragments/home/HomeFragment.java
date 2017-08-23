@@ -35,7 +35,6 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -77,6 +76,9 @@ import static android.content.Context.SENSOR_SERVICE;
 public class HomeFragment extends Fragment implements OnClickEvent, DataObserver, OnBackPressedEvent,
         SwipeRefreshLayout.OnRefreshListener {
 
+    private static final int REQUEST_PERMISIONS = 112;
+    private final int SPLASH_DISPLAY_LENGTH = 2000;
+    GoogleMap mGoogleMap;
     //xml components
     private RecyclerView recyclerViewHelp, recyclerViewCategory;
     private View rootView;
@@ -90,7 +92,6 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     private TextView tvMapSearch, tvARviewSearch, tvCategorySearch, tvKeyWordSearch;
     private AppBarLayout appBarLayout;
     private View itemView;
-
     //object and variable declaration
     private ArrayList<PostedJobModel> postedJobList;
     private HomeActivity homeActivity;
@@ -112,12 +113,9 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     private List<Sensor> sensors;
     private Sensor sensorGrav;
     private Sensor sensorMag;
-    private static final int REQUEST_PERMISIONS = 112;
-    private final int SPLASH_DISPLAY_LENGTH = 2000;
     private ArrayList<ARViewModel> arViewList;
     private ArrayList<String> category = new ArrayList<>();
     private String lang = "en";
-    GoogleMap mGoogleMap;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -574,7 +572,6 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
             dialog.show();
 
             MapView mMapView;
-            MapsInitializer.initialize(getActivity());
 
             mMapView = (MapView) dialog.findViewById(R.id.map);
             mMapView.onCreate(dialog.onSaveInstanceState());
