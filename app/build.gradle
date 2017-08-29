@@ -55,6 +55,11 @@ dependencies {
     }
     //compile 'ch.acra:acra:4.9.2'
     //compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    // compile 'com.google.android.gms:play-services-ads:11.0.4'
+    // compile 'ch.acra:acra:4.9.2'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true;
+    }
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.volley:volley:1.0.0'
@@ -70,15 +75,12 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:11.0.4'
     compile 'com.google.firebase:firebase-ads:11.0.4'
     compile 'com.google.firebase:firebase-crash:11.0.4'
-    compile "com.google.firebase:firebase-auth:11.0.4"
+    compile 'com.google.firebase:firebase-auth:11.0.4'
+    // compile 'com.google.firebase:firebase-core:11.0.4'
     compile 'com.github.bumptech.glide:glide:3.8.0'
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
     compile 'com.stripe:stripe-android:4.1.1'
-   // compile 'com.google.android.gms:play-services-ads:11.0.4'
-   // compile 'ch.acra:acra:4.9.2'
+
     testCompile 'junit:junit:4.12'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
-    }
 }
 apply plugin: 'com.google.gms.google-services'

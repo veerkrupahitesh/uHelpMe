@@ -30,6 +30,7 @@ import com.veeritsolutions.uhelpme.api.ApiList;
 import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
+import com.veeritsolutions.uhelpme.customdialog.CustomDialog;
 import com.veeritsolutions.uhelpme.enums.RegisterBy;
 import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
@@ -183,17 +184,24 @@ public class SignUpActivity extends AppCompatActivity implements OnClickEvent, D
             case clientInsert:
 
                 PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
-                signUpInFireBase();
+                Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+                // signUpInFireBase();
                 break;
         }
     }
 
     private void signUpInFireBase() {
+        CustomDialog.getInstance().showProgress(this, "", false);
         LoginUserModel loginUserModel = LoginUserModel.getLoginUserModel();
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(loginUserModel.getEmailId(), loginUserModel.getPassword())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        CustomDialog.getInstance().dismiss();
                         if (task.isSuccessful()) {
                             Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
@@ -208,6 +216,7 @@ public class SignUpActivity extends AppCompatActivity implements OnClickEvent, D
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        CustomDialog.getInstance().dismiss();
                         ToastHelper.getInstance().showMessage(e.getLocalizedMessage());
                     }
                 });

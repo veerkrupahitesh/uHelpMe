@@ -325,11 +325,23 @@ public class SignInActivity extends AppCompatActivity implements OnClickEvent, D
         switch (mRequestCode) {
 
             case GetUser:
-                singInToFireBase(false);
+                PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
+                Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+                // singInToFireBase(false);
                 break;
 
             case clientInsert:
-                singInToFireBase(true);
+                PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
+                intent = new Intent(SignInActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+                //singInToFireBase(true);
                 break;
 
         }

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "914815999658-tg6mms6d559ooevu9umv7dle6ol1sl1m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.veeritsolutions.uhelpme",
+            "certificate_hash": "914cabd65d114ead2b104c6aaf209e13a9ed0371"
+          }
+        },
+        {
           "client_id": "914815999658-hh4o0fhc1hbpiqc56dk2pmkc1nter1rn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
