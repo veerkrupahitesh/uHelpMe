@@ -1,12 +1,10 @@
 package com.veeritsolutions.uhelpme.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.api.ApiList;
@@ -31,16 +34,12 @@ import com.veeritsolutions.uhelpme.enums.RegisterBy;
 import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
+import com.veeritsolutions.uhelpme.models.LoginUserModel;
 import com.veeritsolutions.uhelpme.utility.Utils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import static com.veeritsolutions.uhelpme.api.RequestCode.clientInsert;
 
 
 public class SignUpActivity extends AppCompatActivity implements OnClickEvent, DataObserver {
@@ -184,13 +183,34 @@ public class SignUpActivity extends AppCompatActivity implements OnClickEvent, D
             case clientInsert:
 
                 PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
-                Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
+                signUpInFireBase();
                 break;
         }
+    }
+
+    private void signUpInFireBase() {
+        LoginUserModel loginUserModel = LoginUserModel.getLoginUserModel();
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(loginUserModel.getEmailId(), loginUserModel.getPassword())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                            finish();
+                        } else {
+                            ToastHelper.getInstance().showMessage(task.getException().getLocalizedMessage());
+                        }
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        ToastHelper.getInstance().showMessage(e.getLocalizedMessage());
+                    }
+                });
     }
 
     @Override

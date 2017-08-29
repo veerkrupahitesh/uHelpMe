@@ -5,12 +5,12 @@
     phone no : 9033304750
     pass : abc123456
     -->
-   <!-- <string name="facebook_app_id" translatable="false">237270140102886</string>-->
+    <!-- <string name="facebook_app_id" translatable="false">237270140102886</string>-->
     <!--Google map login credentials
     email id : veerkrupa.nidhidave@gmail.com
     pass : Infotechs123
     -->
-   <!-- <string name="google_android_map_api_key" translatable="false">AIzaSyDzLhC3HmSR63oO0eBVbd4eHcaICOelXxY</string>-->
+    <!-- <string name="google_android_map_api_key" translatable="false">AIzaSyDzLhC3HmSR63oO0eBVbd4eHcaICOelXxY</string>-->
 
     <string name="app_name">UHelpMe</string>
     <string name="str_no">No</string>
@@ -30,8 +30,8 @@
     <string name="str_view_all_offers">View all offers</string>
     <string name="str_login_failed">Login failed</string>
 
-   <!-- <string name="str_hint_frist_name">First Name</string>-->
-   <!-- <string name="str_hint_last_name">Last Name</string>-->
+    <!-- <string name="str_hint_frist_name">First Name</string>-->
+    <!-- <string name="str_hint_last_name">Last Name</string>-->
     <!--<string name="str_hint_email">Email</string>-->
     <string name="str_general_condition">condition</string>
     <string name="str_header">Create An Account</string>
@@ -83,7 +83,7 @@
     <string name="str_profile_info">Profile Information</string>
 
 
-   <!-- <string name="Time_Remaning">Time Remaning:</string>-->
+    <!-- <string name="Time_Remaning">Time Remaning:</string>-->
     <string name="My_Offer">My Offer</string>
     <string name="str_select_profile_photo">Select photo</string>
     <string name="str_camera">Camera</string>
@@ -264,5 +264,7 @@
     <string name="delete_chat">Delete chat</string>
     <string name="leave_group">Leave Group</string>
     <string name="delete_group">Delete Group</string>
+    <string name="str_signout_failed">Failed to Sign out your account!</string>
+    <string name="str_sigin_failed">Failed to Sign in your account!</string>
 
 </resources>

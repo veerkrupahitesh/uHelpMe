@@ -2,6 +2,7 @@ package com.veeritsolutions.uhelpme.fragments.profile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +13,10 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.activity.ProfileActivity;
@@ -20,6 +25,7 @@ import com.veeritsolutions.uhelpme.api.ApiList;
 import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
+import com.veeritsolutions.uhelpme.customdialog.CustomDialog;
 import com.veeritsolutions.uhelpme.enums.RegisterBy;
 import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
@@ -157,7 +163,7 @@ public class ProfileHomeFragment extends Fragment implements OnClickEvent, OnBac
         tvOffered.setText(String.valueOf(loginUserModel.getOffered()));
 
         LoginUserModel.setLoginCredentials(RestClient.getGsonInstance().toJson(loginUserModel));
-       // PrefHelper.getInstance().setString(PrefHelper.CLIENT_CREDENTIALS, Utils.objectToString(loginUserModel));
+        // PrefHelper.getInstance().setString(PrefHelper.CLIENT_CREDENTIALS, Utils.objectToString(loginUserModel));
     }
 
     @Override
@@ -227,6 +233,8 @@ public class ProfileHomeFragment extends Fragment implements OnClickEvent, OnBac
                     if (loginUser.getRegisteredBy().equals(RegisterBy.APP.getRegisterBy())) {
 
                         PrefHelper.getInstance().clearAllPrefs();
+                        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+                            FirebaseAuth.getInstance().signOut();
                         Intent intent = new Intent(profileActivity, SignInActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
                         startActivity(intent);
@@ -235,13 +243,35 @@ public class ProfileHomeFragment extends Fragment implements OnClickEvent, OnBac
 
                     } else if (loginUser.getRegisteredBy().equals(RegisterBy.FACEBOOK.getRegisterBy())) {
 
-                        PrefHelper.getInstance().clearAllPrefs();
-                        SignInActivity.logoutToFacebook();
-                        Intent intent = new Intent(profileActivity, SignInActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
-                        startActivity(intent);
-                        profileActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                        profileActivity.finish();
+                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                            CustomDialog.getInstance().showProgress(getActivity(), "", false);
+                            //FirebaseAuth.getInstance().signOut();
+                            FirebaseAuth.getInstance().getCurrentUser().delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            CustomDialog.getInstance().dismiss();
+                                            if (task.isSuccessful()) {
+                                                PrefHelper.getInstance().clearAllPrefs();
+                                                SignInActivity.logoutToFacebook();
+                                                Intent intent = new Intent(profileActivity, SignInActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
+                                                startActivity(intent);
+                                                profileActivity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                                profileActivity.finish();
+                                            } else {
+                                                ToastHelper.getInstance().showMessage(getString(R.string.str_signout_failed));
+                                            }
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            CustomDialog.getInstance().dismiss();
+                                            ToastHelper.getInstance().showMessage(getString(R.string.str_signout_failed));
+                                        }
+                                    });
+                        }
                     }
                 break;
         }

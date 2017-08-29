@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.activity.HomeActivity;
@@ -31,16 +30,13 @@ import com.veeritsolutions.uhelpme.api.ApiList;
 import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
-import com.veeritsolutions.uhelpme.api.ServerConfig;
 import com.veeritsolutions.uhelpme.fragments.profile.OtherPersonProfileFragment;
-import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
 import com.veeritsolutions.uhelpme.models.ChatModel;
 import com.veeritsolutions.uhelpme.models.ChatUsersListModel;
 import com.veeritsolutions.uhelpme.models.LoginUserModel;
-import com.veeritsolutions.uhelpme.models.AllHelpOfferModel;
 import com.veeritsolutions.uhelpme.utility.Constants;
 import com.veeritsolutions.uhelpme.utility.Utils;
 
@@ -69,7 +65,7 @@ public class GroupChatFragment extends Fragment implements OnClickEvent, OnBackP
     private ChatUsersListModel chatGroupModel;
 
     // Firebase variables and objects
-    private FirebaseDatabase firebaseDatabase;
+    // private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReferenceGroup;
 
 
@@ -80,13 +76,13 @@ public class GroupChatFragment extends Fragment implements OnClickEvent, OnBackP
         homeActivity = (HomeActivity) getActivity();
         bundle = getArguments();
         loginUserModel = LoginUserModel.getLoginUserModel();
+        // firebaseDatabase = FirebaseDatabase.getInstance(ServerConfig.FCM_APP_URL);
+        // firebaseDatabase.setPersistenceEnabled(true);
 
         if (bundle != null) {
             chatGroupModel = (ChatUsersListModel) bundle.getSerializable(Constants.CHAT_DATA);
-            firebaseDatabase = FirebaseDatabase.getInstance(ServerConfig.FCM_APP_URL);
-            databaseReferenceGroup = firebaseDatabase.getReference().child(String.valueOf(chatGroupModel.getId()));
+            databaseReferenceGroup = MyApplication.getInstance().getFirebaseDatabase().getReference().child(String.valueOf(chatGroupModel.getId()));
         }
-
         // databaseReferenceTwo = firebaseDatabase.getReference().child(String.valueOf(specificCategoryChatListModel.getClientId() + loginUserModel.getClientId()));
     }
 

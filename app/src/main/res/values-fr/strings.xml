@@ -280,4 +280,6 @@
     <string name="delete_chat">Supprimer le chat</string>
     <string name="leave_group">Quitter le groupe</string>
     <string name="delete_group">Supprimer le groupe</string>
+    <string name="str_signout_failed" />
+    <string name="str_sigin_failed" />
 </resources>

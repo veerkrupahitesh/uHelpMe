@@ -15,6 +15,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.firebase.database.FirebaseDatabase;
+import com.veeritsolutions.uhelpme.api.ServerConfig;
 import com.veeritsolutions.uhelpme.utility.Constants;
 import com.veeritsolutions.uhelpme.utility.Debug;
 import com.veeritsolutions.uhelpme.utility.ExceptionHandler;
@@ -49,6 +51,7 @@ public class MyApplication extends Application implements Application.ActivityLi
     public Typeface FONT_WORKSANS_MEDIUM, FONT_WORKSANS_REGULAR, FONT_WORKSANS_LIGHT;
     String response;
     private RequestQueue mRequestQueue;
+    private FirebaseDatabase firebaseDatabase;
 
     public static Activity getCurrentActivity() {
         return currentActivity;
@@ -83,6 +86,8 @@ public class MyApplication extends Application implements Application.ActivityLi
         FONT_WORKSANS_LIGHT = getTypeFace(Constants.FONT_WORKSANS_LIGHT);
         registerActivityLifecycleCallbacks(this);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+        firebaseDatabase = FirebaseDatabase.getInstance(ServerConfig.FCM_APP_URL);
+        firebaseDatabase.setPersistenceEnabled(true);
     }
 
     @Override
@@ -221,6 +226,10 @@ public class MyApplication extends Application implements Application.ActivityLi
                 VOLLEY_TIMEOUT,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+    }
+
+    public FirebaseDatabase getFirebaseDatabase() {
+        return firebaseDatabase;
     }
 }
 

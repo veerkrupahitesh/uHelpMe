@@ -277,4 +277,6 @@
     <string name="delete_chat">Delete chat</string>
     <string name="leave_group">Leave Group</string>
     <string name="delete_group">Delete Group</string>
+    <string name="str_signout_failed">Failed to Sign out your account!</string>
+    <string name="str_sigin_failed">Failed to Sign in your account!</string>
 </resources>

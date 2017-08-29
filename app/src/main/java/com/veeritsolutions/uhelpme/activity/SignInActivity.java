@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.util.Patterns;
@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 
 import com.android.volley.Request;
 import com.facebook.AccessToken;
@@ -27,6 +26,11 @@ import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.api.ApiList;
@@ -56,26 +60,35 @@ import java.util.Map;
 
 public class SignInActivity extends AppCompatActivity implements OnClickEvent, DataObserver {
 
+    private final String FIELDS = "fields";
+    private final String FB_REQUEST_PARAMETER = "id, first_name, last_name, email,gender, birthday, location";
     private Button btnLogin, btnLoginFacebook, btnCreateAccount;
     private EditText edtEmail, edtPassword;
     private TextView txvForgotPassword, txvOr;
     private RelativeLayout relParentView;
-
     private String email, password;
     private Intent intent;
     private CallbackManager callbackManager;
     private AccessToken FBAccessToken;
-    private final String FIELDS = "fields";
     private List<String> accessUserDetailPermission = Arrays.asList("public_profile", "email");
-    private final String FB_REQUEST_PARAMETER = "id, first_name, last_name, email,gender, birthday, location";
     private DataObserver dataObserver;
     private String lang = "en";
+
+    private FirebaseAuth auth;
+
+    /**
+     * This method destroy the current access token.
+     */
+    public static void logoutToFacebook() {
+        LoginManager.getInstance().logOut();
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initFacebookSdk();
         setContentView(R.layout.activity_sign_in);
+        auth = FirebaseAuth.getInstance();
         //  Utils.printFbKeyHash();
         if (PrefHelper.getInstance().containKey(PrefHelper.LANGUAGE)) {
             lang = PrefHelper.getInstance().getString(PrefHelper.LANGUAGE, "en");
@@ -127,7 +140,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickEvent, D
 
         Utils.setupOutSideTouchHideKeyboard(relParentView);
     }
-
 
     @Override
     public void onClick(View view) {
@@ -278,13 +290,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickEvent, D
         });
     }
 
-    /**
-     * This method destroy the current access token.
-     */
-    public static void logoutToFacebook() {
-        LoginManager.getInstance().logOut();
-    }
-
     private boolean validateLoginForm() {
 
         email = edtEmail.getText().toString().trim();
@@ -320,31 +325,92 @@ public class SignInActivity extends AppCompatActivity implements OnClickEvent, D
         switch (mRequestCode) {
 
             case GetUser:
-
-                PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
-
-                Intent i = new Intent(SignInActivity.this, HomeActivity.class);
-                startActivity(i);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
+                singInToFireBase(false);
                 break;
 
             case clientInsert:
-
-                PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
-                Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
+                singInToFireBase(true);
                 break;
 
         }
     }
 
+
     @Override
     public void onFailure(RequestCode mRequestCode, String mError) {
         ToastHelper.getInstance().showMessage(mError);
+    }
 
+    private void singInToFireBase(boolean fromFacebookLogin) {
+        final LoginUserModel loginUserModel = LoginUserModel.getLoginUserModel();
+
+        if (fromFacebookLogin) {
+            CustomDialog.getInstance().showProgress(this, "", false);
+            auth.createUserWithEmailAndPassword(loginUserModel.getEmailId(), loginUserModel.getEmailId())
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            CustomDialog.getInstance().dismiss();
+                            if (task.isSuccessful()) {
+                                PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
+                                Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                finish();
+                            } else {
+                                CustomDialog.getInstance().showProgress(SignInActivity.this, "", false);
+                                auth.signInWithEmailAndPassword(loginUserModel.getEmailId(), loginUserModel.getEmailId())
+                                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                                CustomDialog.getInstance().dismiss();
+                                                PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
+                                                Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
+                                                startActivity(intent);
+                                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                                finish();
+                                            }
+                                        });
+                                //ToastHelper.getInstance().showMessage(getString(R.string.str_sigin_failed));
+                            }
+                        }
+                    });
+                    /*.addOnFailureListener(this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            CustomDialog.getInstance().dismiss();
+                            ToastHelper.getInstance().showMessage(e.getLocalizedMessage());
+                            //ToastHelper.getInstance().showMessage(e.getLocalizedMessage());
+                        }
+                    });*/
+        } else {
+            CustomDialog.getInstance().showProgress(this, "", false);
+            auth.signInWithEmailAndPassword(loginUserModel.getEmailId(), loginUserModel.getPassword())
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            CustomDialog.getInstance().dismiss();
+                            if (task.isSuccessful()) {
+                                PrefHelper.getInstance().setBoolean(PrefHelper.IS_LOGIN, true);
+                                Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear the stack of activities
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                finish();
+                            } else {
+                                ToastHelper.getInstance().showMessage(getString(R.string.str_sigin_failed));
+                            }
+                        }
+                    })
+                    .addOnFailureListener(this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            CustomDialog.getInstance().dismiss();
+                            ToastHelper.getInstance().showMessage(getString(R.string.str_sigin_failed));
+                        }
+                    });
+        }
     }
 }

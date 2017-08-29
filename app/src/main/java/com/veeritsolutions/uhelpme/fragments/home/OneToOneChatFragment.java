@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.activity.HomeActivity;
@@ -31,9 +30,7 @@ import com.veeritsolutions.uhelpme.api.ApiList;
 import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
-import com.veeritsolutions.uhelpme.api.ServerConfig;
 import com.veeritsolutions.uhelpme.fragments.profile.OtherPersonProfileFragment;
-import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
@@ -67,7 +64,7 @@ public class OneToOneChatFragment extends Fragment implements OnClickEvent, OnBa
     private LoginUserModel loginUserModel;
 
     // Firebase variables and objects
-    private FirebaseDatabase firebaseDatabase;
+    //private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReferenceOne, databaseReferenceTwo;
 
 
@@ -85,9 +82,11 @@ public class OneToOneChatFragment extends Fragment implements OnClickEvent, OnBa
             specificCategoryChatListModel = (ChatUsersListModel) bundle.getSerializable(Constants.CHAT_DATA);
         }
 
-        firebaseDatabase = FirebaseDatabase.getInstance(ServerConfig.FCM_APP_URL);
-        databaseReferenceOne = firebaseDatabase.getReference().child(String.valueOf(loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId()));
-        databaseReferenceTwo = firebaseDatabase.getReference().child(String.valueOf(specificCategoryChatListModel.getId() + "_" + loginUserModel.getClientId()));
+        // firebaseDatabase = FirebaseDatabase.getInstance(ServerConfig.FCM_APP_URL);
+        // firebaseDatabase.setPersistenceEnabled(true);
+
+        databaseReferenceOne = MyApplication.getInstance().getFirebaseDatabase().getReference().child(String.valueOf(loginUserModel.getClientId() + "_" + specificCategoryChatListModel.getId()));
+        databaseReferenceTwo = MyApplication.getInstance().getFirebaseDatabase().getReference().child(String.valueOf(specificCategoryChatListModel.getId() + "_" + loginUserModel.getClientId()));
 
     }
 
