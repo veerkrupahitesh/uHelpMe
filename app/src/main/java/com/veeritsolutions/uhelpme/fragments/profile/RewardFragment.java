@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.veeritsolutions.uhelpme.MyApplication;
@@ -20,17 +19,10 @@ import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.activity.ProfileActivity;
 import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
-import com.veeritsolutions.uhelpme.fragments.OtherPersonHelpMeFragment;
-import com.veeritsolutions.uhelpme.fragments.OtherPersonOffersFragment;
-import com.veeritsolutions.uhelpme.fragments.OtherPersonReviewRatingFragment;
-import com.veeritsolutions.uhelpme.fragments.home.DashboardHelpMeFragment;
-import com.veeritsolutions.uhelpme.fragments.home.DashboardMyOfferFragment;
-import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
 import com.veeritsolutions.uhelpme.models.LoginUserModel;
-import com.veeritsolutions.uhelpme.utility.Constants;
 import com.veeritsolutions.uhelpme.utility.Utils;
 import com.veeritsolutions.uhelpme.utility.ZoomOutPageTransformer;
 
@@ -43,6 +35,9 @@ import java.util.List;
 
 public class RewardFragment extends Fragment implements OnClickEvent, OnBackPressedEvent, DataObserver {
 
+    // private TabHost tabHost;
+    public final String TAB_ONE = "Rewards Points";
+    public final String TAB_TWO = "Redeem History";
     private View rootView;
     private ImageView imgProfilePhoto;
     private TextView tvUserName, tvLocation, tvRatingLabel, tvRating, tvPointlabel, tvPoint, tvHelpMeLabel,
@@ -50,12 +45,7 @@ public class RewardFragment extends Fragment implements OnClickEvent, OnBackPres
     private RatingBar rbRating;
     private ViewPager mViewPager;
     private TabLayout tabLayout;
-
     private ProfileActivity profileActivity;
-   // private TabHost tabHost;
-    public final String TAB_ONE = "Rewards Points";
-    public final String TAB_TWO = "Redeem History";
-
     //private FragmentManager fragmentManager;
     private OnClickEvent onClickEvent;
     private OnBackPressedEvent onBackPressedEvent;
@@ -70,7 +60,7 @@ public class RewardFragment extends Fragment implements OnClickEvent, OnBackPres
 
         profileActivity = (ProfileActivity) getActivity();
 
-       // fragmentManager = getChildFragmentManager();
+        // fragmentManager = getChildFragmentManager();
     }
 
     @Nullable
@@ -100,8 +90,8 @@ public class RewardFragment extends Fragment implements OnClickEvent, OnBackPres
         tvOfferedLabel = (TextView) rootView.findViewById(R.id.tv_nav_header_offered_text);
         tvOfferedLabel.setTypeface(MyApplication.getInstance().FONT_WORKSANS_LIGHT);
 
-       // tvRating = (TextView) rootView.findViewById(R.id.tv_nav_header_rating);
-       // tvRating.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+        // tvRating = (TextView) rootView.findViewById(R.id.tv_nav_header_rating);
+        // tvRating.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
 
         tvPoint = (TextView) rootView.findViewById(R.id.tv_nav_header_points);
         tvPoint.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
@@ -156,7 +146,7 @@ public class RewardFragment extends Fragment implements OnClickEvent, OnBackPres
 
             }
         });*/
-      //  updateTab(TAB_ONE, new RedeemPointsFragment());
+        //  updateTab(TAB_ONE, new RedeemPointsFragment());
 
         return rootView;
     }
@@ -166,10 +156,81 @@ public class RewardFragment extends Fragment implements OnClickEvent, OnBackPres
 
         adapter.addFragment(new RedeemPointsFragment(), TAB_ONE);
         adapter.addFragment(new RedeemHistoryFragment(), TAB_TWO);
-       // adapter.addFragment(new OtherPersonOffersFragment(), "Offers", loginUserModel);
+        // adapter.addFragment(new OtherPersonOffersFragment(), "Offers", loginUserModel);
 
         mViewPager.setAdapter(adapter);
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        Utils.setImage(loginUserModel.getProfilePic(), R.drawable.img_user_placeholder, imgProfilePhoto);
+        rbRating.setRating(loginUserModel.getRating());
+        tvUserName.setText(loginUserModel.getFirstName() + " " + loginUserModel.getLastName());
+        if (loginUserModel.getState().length() == 0) {
+            tvLocation.setText(loginUserModel.getCountry());
+        } else {
+            tvLocation.setText(loginUserModel.getState() + ", " + loginUserModel.getCountry());
+        }
+        // tvRatingLabel.setText(String.valueOf(loginUserModel.getRating()));
+        tvPointlabel.setText(String.valueOf(loginUserModel.getPoints()));
+        tvHelpMeLabel.setText(String.valueOf(loginUserModel.getHelpMe()));
+        tvOfferedLabel.setText(String.valueOf(loginUserModel.getOffered()));
+
+    }
+
+    @Override
+    public void onSuccess(RequestCode mRequestCode, Object mObject) {
+
+    }
+
+    @Override
+    public void onFailure(RequestCode mRequestCode, String mError) {
+        ToastHelper.getInstance().showMessage(mError);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        profileActivity.popBackFragment();
+        // profileActivity.removeAllFragment();
+        // profileActivity.pushFragment(new ProfileHomeFragment(), true, false, null);
+//        if (onBackPressedEvent != null) {
+//            onBackPressedEvent.onBackPressed();
+//        }
+        // onBackPressedEvent.onBackPressed();
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        onClickEvent.onClick(view);
+
+        switch (view.getId()) {
+
+            case R.id.img_back_header:
+                Utils.buttonClickEffect(view);
+                profileActivity.popBackFragment();
+                //profileActivity.removeFragmentUntil(ProfileHomeFragment.class);
+//                profileActivity.removeAllFragment();
+//                profileActivity.pushFragment(new ProfileHomeFragment(), true, false, null);
+                break;
+        }
+    }
+
+    private void updateTab(String tabId, Fragment fragment) {
+
+        currentFragment = fragment;
+        onClickEvent = (OnClickEvent) currentFragment;
+        onBackPressedEvent = (OnBackPressedEvent) currentFragment;
+        // if (fragmentManager.findFragmentByTag(tabId) == null) {
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.tab_container, currentFragment, tabId)
+                .addToBackStack(tabId)
+                .commit();
+        // }
     }
 
     /**
@@ -215,76 +276,6 @@ public class RewardFragment extends Fragment implements OnClickEvent, OnBackPres
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        Utils.setImage(loginUserModel.getProfilePic(), R.drawable.img_user_placeholder, imgProfilePhoto);
-        rbRating.setRating(loginUserModel.getRating());
-        tvUserName.setText(loginUserModel.getFirstName() + " " + loginUserModel.getLastName());
-        if (loginUserModel.getState().length() == 0) {
-            tvLocation.setText(loginUserModel.getCountry());
-        } else {
-            tvLocation.setText(loginUserModel.getState() + ", " + loginUserModel.getCountry());
-        }
-       // tvRatingLabel.setText(String.valueOf(loginUserModel.getRating()));
-        tvPointlabel.setText(String.valueOf(loginUserModel.getPoints()));
-        tvHelpMeLabel.setText(String.valueOf(loginUserModel.getHelpMe()));
-        tvOfferedLabel.setText(String.valueOf(loginUserModel.getOffered()));
-
-    }
-
-
-    @Override
-    public void onSuccess(RequestCode mRequestCode, Object mObject) {
-
-    }
-
-    @Override
-    public void onFailure(RequestCode mRequestCode, String mError) {
-        ToastHelper.getInstance().showMessage(mError);
-    }
-
-    @Override
-    public void onBackPressed() {
-       // profileActivity.removeAllFragment();
-       // profileActivity.pushFragment(new ProfileHomeFragment(), true, false, null);
-//        if (onBackPressedEvent != null) {
-//            onBackPressedEvent.onBackPressed();
-//        }
-        onBackPressedEvent.onBackPressed();
-    }
-
-    @Override
-    public void onClick(View view) {
-
-        onClickEvent.onClick(view);
-
-        switch (view.getId()) {
-
-            case R.id.img_back_header:
-                Utils.buttonClickEffect(view);
-                profileActivity.popBackFragment();
-                //profileActivity.removeFragmentUntil(ProfileHomeFragment.class);
-//                profileActivity.removeAllFragment();
-//                profileActivity.pushFragment(new ProfileHomeFragment(), true, false, null);
-                break;
-        }
-    }
-
-    private void updateTab(String tabId, Fragment fragment) {
-
-        currentFragment = fragment;
-        onClickEvent = (OnClickEvent) currentFragment;
-        onBackPressedEvent = (OnBackPressedEvent) currentFragment;
-        // if (fragmentManager.findFragmentByTag(tabId) == null) {
-        getChildFragmentManager().beginTransaction()
-                .replace(R.id.tab_container, currentFragment, tabId)
-                .addToBackStack(tabId)
-                .commit();
-        // }
     }
 }
 
