@@ -73,6 +73,7 @@ public class Constants {
     public static final int NOTIFICATION_REQUEST_CODE = 1;
     public static final String DEBUG_KEY_FIREBASE_DEVICE_TOKEN = "firebaseTokenKey";
     public static final String AR_VIEW_DATA = "arViewData";
+    public static final int CROP_REQUEST_CODE = 5;
     public static String PAYPAL_SANDBOX_CLIENT_ID = "AQsGc_G-f7kthCZXQeNii8XiE_0iUYWXqPgAVMwc0bfJYS69WtYVMGOOD52aGNH8sKrXaqTgRHcrF_s-";
     public static String PAYPAL_LIVE_CLIENT_ID = "AfAIE1qZLeFN2_3vMXWdftievpOdq5Ca4ShQ1shGeKTB--LW-ClHChMPj2WlXyxPsFExhdzXVtvV31Zs";
     public static String STRIPE_TEST_API_KEY = "pk_test_uogRcFSQqW34ROnD3I26k35d";

@@ -1,5 +1,6 @@
 package com.veeritsolutions.uhelpme.activity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -8,8 +9,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Patterns;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -176,7 +180,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickEvent, D
                 Utils.buttonClickEffect(view);
                 if (Utils.isInternetAvailable()) {
 
-                    loginToFaceBook();
+                    showTermsAndConditionsDialog();
 
                     //LoginManager.getInstance().logInWithReadPermissions(SignInActivity.this, Arrays.asList("public_profile", "user_friends", "email"));
                 } else {
@@ -191,6 +195,44 @@ public class SignInActivity extends AppCompatActivity implements OnClickEvent, D
                 break;
         }
 
+    }
+
+    private void showTermsAndConditionsDialog() {
+        final Dialog mDialog = new Dialog(this, R.style.dialogStyle);
+        //  @SuppressLint("InflateParams")
+        //  View dataView = LayoutInflater.from(mContext).inflate(R.layout.custom_dialog_alert, null, false);
+        mDialog.setContentView(R.layout.custom_dialog_terms_conditions);
+
+         /* Set Dialog width match parent */
+        mDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mDialog.getWindow().getAttributes().windowAnimations = R.style.animationdialog;
+        //mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        TextView tvTermsAndConditions = (TextView) mDialog.findViewById(R.id.tv_termsAndConditions);
+        tvTermsAndConditions.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            tvTermsAndConditions.setText(Html.fromHtml(getString(R.string.general_conditions)
+                    + getString(R.string.link), Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            tvTermsAndConditions.setText(Html.fromHtml(getString(R.string.general_conditions)
+                    + getString(R.string.link)));
+        }
+        tvTermsAndConditions.setMovementMethod(LinkMovementMethod.getInstance());
+        // mDialogTitle.setText(mTitle);
+
+        TextView tvOk = (TextView) mDialog.findViewById(R.id.btn_alertOk);
+        tvOk.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
+
+        tvOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDialog.dismiss();
+                loginToFaceBook();
+            }
+        });
+        if (!mDialog.isShowing()) {
+            mDialog.show();
+        }
     }
 
     public void initFacebookSdk() {

@@ -19,7 +19,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.veeritsolutions.uhelpme.api.ServerConfig;
 import com.veeritsolutions.uhelpme.utility.Constants;
 import com.veeritsolutions.uhelpme.utility.Debug;
-import com.veeritsolutions.uhelpme.utility.ExceptionHandler;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -85,7 +84,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         FONT_WORKSANS_REGULAR = getTypeFace(Constants.FONT_WORKSANS_REGULAR);
         FONT_WORKSANS_LIGHT = getTypeFace(Constants.FONT_WORKSANS_LIGHT);
         registerActivityLifecycleCallbacks(this);
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+        // Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         firebaseDatabase = FirebaseDatabase.getInstance(ServerConfig.FCM_APP_URL);
         firebaseDatabase.setPersistenceEnabled(true);
     }

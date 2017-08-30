@@ -169,7 +169,7 @@
     <string name="app_feedback">app commentaires</string>
     <string name="sign_out">DÉCONNEXION</string>
     <string name="points">POINTS</string>
-    <string name="learn_more">Apprendre encore plus</string>
+    <string name="learn_more">Gagne plus</string>
     <string name="redeem_points">Échanger des points</string>
     <string name="search_places">Rechercher des lieux</string>
     <string name="rate_app">Application de taux</string>
@@ -186,7 +186,7 @@
     <string name="enter_valid_email">Entrez une adresse email valide</string>
     <string name="enter_password">Entrer le mot de passe</string>
     <string name="general_conditions">En créant votre compte, vous acceptez le</string>
-    <string name="link"><![CDATA[<a color=\"#0095d7\"href=\"https://www.google.co.in/\"> conditions générales</a> of <b>UHelpMe</b>]]></string>
+    <string name="link"><![CDATA[<a color=\"#0095d7\"href=\"http://www.uhelpme.com/termsandconditions.html/\"> termes et conditions</a> of <b>UHelpMe</b>]]></string>
     <string name="enter_first_name">Entrez votre prénom</string>
     <string name="enter_last_name">Entrez le nom de famille</string>
     <string name="admin">(Admin)</string>
@@ -282,4 +282,7 @@
     <string name="delete_group">Supprimer le groupe</string>
     <string name="str_signout_failed" />
     <string name="str_sigin_failed" />
+    <string name="str_confirm_pass_does_not_matches">Confirmer le mot de passe ne correspond pas</string>
+    <string name="str_enter_confirm_pass">Entrez le mot de passe de confirmation</string>
+    <string name="str_terms_and_condtions">Acceptez les termes et conditions</string>
 </resources>

@@ -29,7 +29,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
-import com.soundcloud.android.crop.Crop;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.activity.HomeActivity;
@@ -41,7 +42,6 @@ import com.veeritsolutions.uhelpme.api.RestClient;
 import com.veeritsolutions.uhelpme.customdialog.CustomDialog;
 import com.veeritsolutions.uhelpme.enums.ImageUpload;
 import com.veeritsolutions.uhelpme.fragments.profile.OtherPersonProfileFragment;
-import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
@@ -487,13 +487,25 @@ public class CreateGroupFragment extends Fragment implements OnClickEvent, OnBac
                     // ContextCompat.checkSelfPermission(getContext(), permissionList.get(0));
                     if (PermissionClass.checkPermission(homeActivity,
                             PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList)) {
-                        showImageSelect(homeActivity, getString(R.string.str_select_profile_photo), true);
+                        // start cropping activity for pre-acquired image saved on the device
+                        CropImage.activity()
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .setActivityTitle("Crop")
+                                .setRequestedSize(400, 400)
+                                .start(getContext(), CreateGroupFragment.this);
+                        //showImageSelect(homeActivity, getString(R.string.str_select_profile_photo), true);
 
                     } /*else {
                         PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList);
                     }*/
                 } else {
-                    showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
+                    // start cropping activity for pre-acquired image saved on the device
+                    CropImage.activity()
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setActivityTitle("Crop")
+                            .setRequestedSize(400, 400)
+                            .start(getContext(), CreateGroupFragment.this);
+                    // showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
                 }
             }
         });
@@ -537,10 +549,11 @@ public class CreateGroupFragment extends Fragment implements OnClickEvent, OnBac
                     beginCrop(selectedImageUri);
                     break;
 
-                case Crop.REQUEST_CROP:
-
-                    handleCrop(resultCode, data);
+                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                    handleCrop(0, result.getUri().getPath());
                     break;
+
             }
         }
     }
@@ -548,18 +561,18 @@ public class CreateGroupFragment extends Fragment implements OnClickEvent, OnBac
     private void beginCrop(Uri source) {
 
         Uri destination = Uri.fromFile(new File(getActivity().getCacheDir(), "cropped"));
-        Crop.of(source, destination)
+       /* Crop.of(source, destination)
                 .withAspect(200, 200)
-                .start(getActivity(), this);
+                .start(getActivity(), this);*/
     }
 
-    private void handleCrop(int resultCode, Intent data) {
+    private void handleCrop(int resultCode, String data) {
 
-        image64Base = Utils.getStringImage(Crop.getOutput(data).getPath(), ImageUpload.ClientProfile);
+        image64Base = Utils.getStringImage(data, ImageUpload.ClientProfile);
         imgGroupPhoto.setVisibility(View.VISIBLE);
-        imgGroupPhoto.setImageURI(null);
-        imgGroupPhoto.setImageURI(Crop.getOutput(data));
-        //Utils.setImage(Crop.getOutput(data).getPath(), R.drawable.img_user_placeholder, imgHelpPhoto);
+        //imgGroupPhoto.setImageURI(null);
+        //imgGroupPhoto.setImageURI(data);
+        Utils.setImage(data, R.drawable.img_user_placeholder, imgGroupPhoto);
     }
 
     @Override
@@ -578,7 +591,13 @@ public class CreateGroupFragment extends Fragment implements OnClickEvent, OnBac
                     shouldPermit.add(permissions[i]);
                 }
                 if (PermissionClass.verifyPermission(grantResults)) {
-                    showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
+                    // start cropping activity for pre-acquired image saved on the device
+                    CropImage.activity()
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setActivityTitle("Crop")
+                            .setRequestedSize(400, 400)
+                            .start(getContext(), CreateGroupFragment.this);
+                    //showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
                 } else {
                     PermissionClass.checkPermission(homeActivity, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList);
                 }

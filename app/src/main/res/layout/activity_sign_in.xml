@@ -3,7 +3,7 @@
     android:id="@+id/parentView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img_login_background">
+    android:background="@drawable/img_chat_background">
 
     <ImageView
         android:id="@+id/img_logo"
@@ -17,10 +17,11 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@+id/img_logo"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -114,12 +115,12 @@
             android:textColor="@android:color/white" />
 
         <TextView
-            android:onClick="onClick"
             android:id="@+id/txv_forget_pwd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:gravity="center"
+            android:onClick="onClick"
             android:text="@string/str_forget_pwd"
             android:textSize="13sp" />
 
@@ -136,12 +137,12 @@
             android:textSize="15sp" />
 
         <Button
-            android:onClick="onClick"
             android:id="@+id/btn_login_facebook"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/img_fb_login"
+            android:onClick="onClick"
             android:text="@string/login_with_facebook"
             android:textAllCaps="false"
             android:textColor="@android:color/white"

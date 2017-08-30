@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -36,12 +35,12 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
-import com.soundcloud.android.crop.Crop;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.activity.ProfileActivity;
 import com.veeritsolutions.uhelpme.adapters.AdpLocation;
-import com.veeritsolutions.uhelpme.adapters.SpinnerAdapter;
 import com.veeritsolutions.uhelpme.api.ApiList;
 import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
@@ -252,13 +251,25 @@ public class MyProfileFragment extends Fragment implements OnBackPressedEvent, O
                 if (Build.VERSION.SDK_INT > 22) {
                     // ContextCompat.checkSelfPermission(getContext(), permissionList.get(0));
                     if (PermissionClass.checkPermission(getContext(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList)) {
-                        showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
+                        // start cropping activity for pre-acquired image saved on the device
+                        CropImage.activity()
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .setActivityTitle("Crop")
+                                .setRequestedSize(400, 400)
+                                .start(getContext(), this);
+                        //showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
 
                     } /*else {
                         PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList);
                     }*/
                 } else {
-                    showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
+                    // start cropping activity for pre-acquired image saved on the device
+                    CropImage.activity()
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setActivityTitle("Crop")
+                            .setRequestedSize(400, 400)
+                            .start(getContext(), this);
+                    //showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
                 }
                 break;
 
@@ -740,10 +751,9 @@ public class MyProfileFragment extends Fragment implements OnBackPressedEvent, O
                     selectedImageUri = data.getData();
                     beginCrop(selectedImageUri);
                     break;
-
-                case Crop.REQUEST_CROP:
-
-                    handleCrop(resultCode, data);
+                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                    handleCrop(0, result.getUri().getPath());
                     break;
             }
         }
@@ -752,14 +762,14 @@ public class MyProfileFragment extends Fragment implements OnBackPressedEvent, O
     private void beginCrop(Uri source) {
 
         Uri destination = Uri.fromFile(new File(getActivity().getCacheDir(), "cropped"));
-        Crop.of(source, destination)
+        /*Crop.of(source, destination)
                 .withAspect(imgProfilePhoto.getWidth(), imgProfilePhoto.getHeight())
-                .start(getActivity(), this);
+                .start(getActivity(), this);*/
     }
 
-    private void handleCrop(int resultCode, Intent data) {
+    private void handleCrop(int resultCode, String data) {
 
-        image64Base = Utils.getStringImage(Crop.getOutput(data).getPath(), ImageUpload.ClientProfile);
+        image64Base = Utils.getStringImage(data, ImageUpload.ClientProfile);
         // imgHelpPhoto.setVisibility(View.VISIBLE);
         //imgProfilePhoto.setImageURI(null);
         // imgProfilePhoto.setImageURI(Crop.getOutput(data));
@@ -790,7 +800,13 @@ public class MyProfileFragment extends Fragment implements OnBackPressedEvent, O
                     shouldPermit.add(permissions[i]);
                 }
                 if (PermissionClass.verifyPermission(grantResults)) {
-                    showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
+                    // start cropping activity for pre-acquired image saved on the device
+                    CropImage.activity()
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setActivityTitle("Crop")
+                            .setRequestedSize(400, 400)
+                            .start(getContext(), this);
+                    //showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
                 } else {
                     PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList);
                 }

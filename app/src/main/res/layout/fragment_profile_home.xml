@@ -73,14 +73,14 @@
         <View
             android:layout_width="wrap_content"
             android:layout_height="1px"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:background="@android:color/white" />
 
         <LinearLayout
             android:id="@+id/lin_navHeader4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:background="#0095D7"
             android:orientation="horizontal"
             android:paddingBottom="5dp"
@@ -192,18 +192,18 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/NaviBack">
+        android:background="@android:color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/NaviBack"
+            android:background="@android:color/white"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/NaviBack"
+                android:background="@android:color/white"
                 android:orientation="vertical"
                 android:paddingLeft="20dp"
                 android:paddingStart="20dp"
@@ -218,7 +218,7 @@
                     android:onClick="onClick"
                     android:padding="10dp"
                     android:text="@string/my_profile"
-                    android:textColor="#d5d5d5"
+                    android:textColor="@color/colorHint"
                     android:textSize="15sp" />
 
                 <TextView
@@ -230,7 +230,7 @@
                     android:onClick="onClick"
                     android:padding="10dp"
                     android:text="@string/reviews_and_ratings"
-                    android:textColor="#d5d5d5"
+                    android:textColor="@color/colorHint"
                     android:textSize="15sp" />
 
                 <TextView
@@ -242,7 +242,7 @@
                     android:onClick="onClick"
                     android:padding="10dp"
                     android:text="@string/rewards"
-                    android:textColor="#d5d5d5"
+                    android:textColor="@color/colorHint"
                     android:textSize="15sp" />
 
                 <TextView
@@ -254,7 +254,7 @@
                     android:onClick="onClick"
                     android:padding="10dp"
                     android:text="@string/packages"
-                    android:textColor="#d5d5d5"
+                    android:textColor="@color/colorHint"
                     android:textSize="15sp" />
 
                 <TextView
@@ -266,13 +266,13 @@
                     android:onClick="onClick"
                     android:padding="10dp"
                     android:text="@string/payments"
-                    android:textColor="#d5d5d5"
+                    android:textColor="@color/colorHint"
                     android:textSize="15sp" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="1px"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:background="@android:color/black" />
@@ -280,7 +280,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/NaviBack"
+                android:background="@android:color/white"
                 android:orientation="vertical"
                 android:paddingLeft="20dp"
                 android:paddingStart="20dp">
@@ -294,7 +294,7 @@
                     android:onClick="onClick"
                     android:padding="10dp"
                     android:text="@string/settings"
-                    android:textColor="#d5d5d5"
+                    android:textColor="@color/colorHint"
                     android:textSize="15sp" />
 
                 <TextView
@@ -306,14 +306,14 @@
                     android:onClick="onClick"
                     android:padding="10dp"
                     android:text="@string/app_feedback"
-                    android:textColor="#d5d5d5"
+                    android:textColor="@color/colorHint"
                     android:textSize="15sp" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="1px"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:background="@android:color/black" />
@@ -328,7 +328,7 @@
                 android:onClick="onClick"
                 android:padding="10dp"
                 android:text="@string/sign_out"
-                android:textColor="#d5d5d5"
+                android:textColor="@color/colorHint"
                 android:textSize="15sp" />
         </LinearLayout>
     </ScrollView>

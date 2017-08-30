@@ -24,6 +24,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -116,6 +118,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     private ArrayList<ARViewModel> arViewList;
     private ArrayList<String> category = new ArrayList<>();
     private String lang = "en";
+    private Animation animShow, animHide;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -164,6 +167,9 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
         homeActivity.tvSearch.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
         homeActivity.tvDashBoard.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
         homeActivity.tvChatRoom.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
+
+        animShow = AnimationUtils.loadAnimation(getActivity(), R.anim.view_show);
+        animHide = AnimationUtils.loadAnimation(getActivity(), R.anim.view_hide);
 
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
@@ -287,76 +293,43 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     }
 
     private void hideViews() {
-        homeActivity.linFooterView.setVisibility(View.GONE);
-        fabSearch.setVisibility(View.GONE);
-        linSearchView.setVisibility(View.GONE);
-        // appBarLayout.setVisibility(View.GONE);
-        //homeActivity.linFooterView.setAlpha(1.0f);
-        /*homeActivity.linFooterView.animate()
-                .setDuration(500)
-                .translationY(appBarLayout.getHeight()).setInterpolator(new AccelerateInterpolator(2))
-                .setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
+        //homeActivity.linFooterView.setVisibility(View.GONE);
+        homeActivity.linFooterView.setAnimation(animHide);
+               /* .animate()
+                .translationY(homeActivity.linFooterView.getHeight())
+                .setDuration(300)
+                .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
                         homeActivity.linFooterView.setVisibility(View.GONE);
                     }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
                 });*/
+        fabSearch.setVisibility(View.GONE);
+        linSearchView.setVisibility(View.GONE);
 
-
-//        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mFabButton.getLayoutParams();
-//        int fabBottomMargin = lp.bottomMargin;
-//        mFabButton.animate().translationY(mFabButton.getHeight()+fabBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
     }
 
     private void showViews() {
+
         homeActivity.linFooterView.setVisibility(View.VISIBLE);
+        homeActivity.linFooterView.setAnimation(animShow);
+               /* .animate()
+                .translationY(0)
+                //.setDuration(1000)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        homeActivity.linFooterView.setVisibility(View.VISIBLE);
+                    }
+                });*/
         fabSearch.setVisibility(View.VISIBLE);
         if (isSearchClosed) {
             linSearchView.setVisibility(View.GONE);
         } else {
             linSearchView.setVisibility(View.VISIBLE);
         }
-        //  appBarLayout.setVisibility(View.VISIBLE);
-        //homeActivity.linFooterView.setAlpha(0.0f);
-        /*homeActivity.linFooterView.animate()
-                .setDuration(500)
-                .translationY(0).setInterpolator(new DecelerateInterpolator(2)).setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                homeActivity.linFooterView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });*/
-        //  mFabButton.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
     }
 
     @Override

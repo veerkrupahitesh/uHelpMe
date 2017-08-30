@@ -172,7 +172,7 @@
     <string name="app_feedback">App Feedback</string>
     <string name="sign_out">SIGN OUT</string>
     <string name="points">POINTS</string>
-    <string name="learn_more">Learn More</string>
+    <string name="learn_more">Earn More</string>
     <string name="redeem_points">Redeem Points</string>
     <string name="search_places">Search places</string>
     <string name="rate_app">Rate App</string>
@@ -189,7 +189,7 @@
     <string name="enter_valid_email">Enter valid email address</string>
     <string name="enter_password">Enter password</string>
     <string name="general_conditions">By creating your account, you accept the</string>
-    <string name="link"><![CDATA[<a color=\"#0095d7\"href=\"https://www.google.co.in/\"> general conditions</a> of <b>UHelpMe</b>]]></string>
+    <string name="link"><![CDATA[<a color=\"#0095d7\"href=\"http://www.uhelpme.com/termsandconditions.html/\"> Terms & Conditions</a> of <b>UHelpMe</b>]]></string>
     <string name="enter_first_name">Enter First Name</string>
     <string name="enter_last_name">Enter last name</string>
     <string name="admin">(Admin)</string>
@@ -279,4 +279,7 @@
     <string name="delete_group">Delete Group</string>
     <string name="str_signout_failed">Failed to Sign out your account!</string>
     <string name="str_sigin_failed">Failed to Sign in your account!</string>
+    <string name="str_confirm_pass_does_not_matches">Confirm password does not matches</string>
+    <string name="str_enter_confirm_pass">Enter confirm password</string>
+    <string name="str_terms_and_condtions">Accept the Terms and Conditions</string>
 </resources>
