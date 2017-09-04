@@ -17,10 +17,14 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -245,7 +249,7 @@ public class CustomDialog {
 
     public void showImageDialog(String imageUrl, final Context context) {
         if (imageUrl != null) {
-            mDialog = new Dialog(context, R.style.mapStyle);
+            mDialog = new Dialog(context, R.style.dialogStyle);
                     /* Set Dialog width match parent */
             mDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             //  dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -253,11 +257,27 @@ public class CustomDialog {
             mDialog.setCancelable(true);
 
             ImageView imgHelpPhoto = (ImageView) mDialog.findViewById(R.id.img_help_ProfilePic);
+            final ProgressBar progressBar = (ProgressBar) mDialog.findViewById(R.id.pg_helpPhoto);
             Glide.with(context)
                     .load(imageUrl)
                     .placeholder(R.color.colorHint)
                     .error(R.color.colorHint)
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target,
+                                                       boolean isFromMemoryCache, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .into(imgHelpPhoto);
+
             //Utils.setImage(imageUrl, R.color.colorHint, imgHelpPhoto);
             if (mDialog != null) {
                 if (!isDialogShowing()) {

@@ -3,7 +3,6 @@ package com.veeritsolutions.uhelpme.utility;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,13 +14,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
-import android.support.annotation.RequiresApi;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.util.Base64;
@@ -34,11 +31,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -46,6 +44,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
 import com.veeritsolutions.uhelpme.MyApplication;
+import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.enums.ImageUpload;
 import com.veeritsolutions.uhelpme.helper.PrefHelper;
 
@@ -67,9 +66,9 @@ import java.util.Locale;
 
 public class Utils {
 
+    private static final float BLUR_RADIUS = 20f;
     static long cacheProfileFlag;
     static long cacheBannerFlag;
-    private static final float BLUR_RADIUS = 20f;
 //    public static float round(float d, int decimalPlace) {
 //        BigDecimal bd = new BigDecimal(Float.toString(d));
 //        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
@@ -827,53 +826,18 @@ public class Utils {
         return sb.toString();
     }
 
-    /*public static void UploadPhoto(final Context context, final String SoapMethodName, final HashMap<String, String> params, final String url) {
+    public static void slideUP(final View view, Context context) {
+        Animation animation = AnimationUtils.loadAnimation(context,
+                R.anim.slid_up);
+        view.startAnimation(animation);
+        // view.setVisibility(View.GONE);
+    }
 
-        // image64Base = Utils.getStringImage(Crop.getOutput(result).getPath());
+    public static void slideDown(final View view, Context context) {
+        Animation animation = AnimationUtils.loadAnimation(context,
+                R.anim.slid_down);
+        view.startAnimation(animation);
+        // view.setVisibility(View.GONE);
+    }
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... param) {
-
-                SoapObject request = new SoapObject(Constants.NAMESPACE, SoapMethodName);
-
-                for (Map.Entry<String, String> e : params.entrySet()) {
-                    request.addProperty(e.getKey(), e.getValue());
-                    // Object key = e.getKey();
-                    // Object value = e.getValue();
-                }
-
-               *//* for (int i = 0; i <= params.size(); i++) {
-                    request.addProperty(params., ApiList.CLIENT_PROFILE_PIC_UPDATE);
-                }
-                request.addProperty("op", ApiList.CLIENT_PROFILE_PIC_UPDATE);
-                request.addProperty("AuthKey", ApiList.AUTH_KEY);
-                request.addProperty("ClientId", String.valueOf(ClientLoginModel.getClientCredentials().getClientId()));
-                request.addProperty("ProfilePic", image64Base);*//*
-
-                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-
-                envelope.dotNet = true;
-                envelope.setOutputSoapObject(request);
-                HttpTransportSE androidHttpTransport = new HttpTransportSE(url);
-                try {
-                    androidHttpTransport.call(Constants.SOAP_ACTION + SoapMethodName, envelope);
-                    SoapPrimitive result1 = (SoapPrimitive) envelope.getResponse();
-                    String str = result1.toString();
-                    Debug.trace("Response", str);
-                } catch (IOException | XmlPullParserException e) {
-                    e.printStackTrace();
-                    // ToastHelper.getInstance().showMessage("Failed! Please try again Later");
-                }
-                // getUserInfo();
-                return null;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                CustomDialog.getInstance().showProgress(context, "Image Uploading...", false);
-            }
-        }.execute();
-    }*/
 }

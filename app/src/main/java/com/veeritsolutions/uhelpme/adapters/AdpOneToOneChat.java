@@ -2,7 +2,6 @@ package com.veeritsolutions.uhelpme.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,11 +16,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.customdialog.CustomDialog;
-import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.models.ChatModel;
 import com.veeritsolutions.uhelpme.models.LoginUserModel;
 import com.veeritsolutions.uhelpme.utility.Debug;
-import com.veeritsolutions.uhelpme.utility.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,15 +48,15 @@ public class AdpOneToOneChat extends RecyclerView.Adapter<RecyclerView.ViewHolde
         //mInflater = activity.getLayoutInflater();
         mModels = new ArrayList<>();
         mKeys = new ArrayList<>();
-        CustomDialog.getInstance().showProgress(context, "", true);
+        //CustomDialog.getInstance().showProgress(context, "", true);
         loginUserModel = LoginUserModel.getLoginUserModel();
 // Look for all child events. We will then map them to our own internal ArrayList, which backs ListView
 
-        mListener = this.mRef.limitToLast(50).addChildEventListener(new ChildEventListener() {
+        mListener = this.mRef/*.limitToLast(50)*/.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
 
-                CustomDialog.getInstance().dismiss();
+                // CustomDialog.getInstance().dismiss();
                 ChatModel model = dataSnapshot.getValue(ChatModel.class);
                 String key = dataSnapshot.getKey();
 

@@ -25,7 +25,7 @@
 
     <!--custom dialog style-->
     <style name="mapStyle" parent="ThemeOverlay.AppCompat.Dialog">
-        <item name="android:background">@android:color/transparent</item>
+        <item name="android:background">#FFFFFF</item>
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>

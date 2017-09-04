@@ -303,11 +303,11 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <Button
-
                     android:id="@+id/btn_update"
                     style="@style/buttonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
+                    android:layout_marginBottom="10dp"
                     android:onClick="onClick"
                     android:text="@string/update" />
             </LinearLayout>

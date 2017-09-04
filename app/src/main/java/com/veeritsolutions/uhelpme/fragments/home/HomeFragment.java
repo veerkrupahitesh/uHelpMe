@@ -1,8 +1,6 @@
 package com.veeritsolutions.uhelpme.fragments.home;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -24,6 +22,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -284,43 +283,42 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     }
 
     private void hideViews() {
-        //homeActivity.linFooterView.setVisibility(View.GONE);
-        homeActivity.linFooterView/*.setAnimation(animHide);*/
-                .animate()
-                .translationY(homeActivity.linFooterView.getHeight())
-                .setDuration(300)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        homeActivity.linFooterView.setVisibility(View.GONE);
-                    }
-                });
+        // Utils.slideDown(homeActivity.linFooterView, getActivity());
+        slideToBottom(homeActivity.linFooterView);
+
         fabSearch.setVisibility(View.GONE);
         linSearchView.setVisibility(View.GONE);
 
     }
 
     private void showViews() {
+        //Utils.slideUP(homeActivity.linFooterView, getActivity());
+        slideToTop(homeActivity.linFooterView);
 
-        // homeActivity.linFooterView.setVisibility(View.VISIBLE);
-        homeActivity.linFooterView/*.setAnimation(animShow);*/
-                .animate()
-                .translationY(0)
-                .setDuration(300)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        homeActivity.linFooterView.setVisibility(View.VISIBLE);
-                    }
-                });
         fabSearch.setVisibility(View.VISIBLE);
         if (isSearchClosed) {
             linSearchView.setVisibility(View.GONE);
         } else {
             linSearchView.setVisibility(View.VISIBLE);
         }
+    }
+
+    // To animate view slide out from top to bottom
+    public void slideToBottom(View view) {
+        TranslateAnimation animate = new TranslateAnimation(0, 0, 0, view.getHeight());
+        animate.setDuration(300);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+        view.setVisibility(View.GONE);
+    }
+
+    // To animate view slide out from bottom to top
+    public void slideToTop(View view) {
+        TranslateAnimation animate = new TranslateAnimation(0, 0, 0, 0);
+        animate.setDuration(300);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+        view.setVisibility(View.GONE);
     }
 
     @Override

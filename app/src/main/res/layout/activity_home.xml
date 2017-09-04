@@ -6,6 +6,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:orientation="vertical">
 
         <FrameLayout
@@ -16,10 +17,10 @@
         </FrameLayout>
 
         <LinearLayout
-            android:background="@android:color/white"
             android:id="@+id/lin_homeFooter"
             android:layout_width="match_parent"
             android:layout_height="65dp"
+            android:background="@android:color/white"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="5">
@@ -64,10 +65,10 @@
                     android:src="@drawable/img_search_tabbar_active" />
 
                 <TextView
-                    android:gravity="center"
                     android:id="@+id/tv_search"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/search"
                     android:textSize="10sp" />
             </LinearLayout>
@@ -97,10 +98,10 @@
                     android:src="@drawable/img_dashboard_active" />
 
                 <TextView
-                    android:gravity="center"
                     android:id="@+id/tv_dashBoard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/dashboard"
                     android:textSize="10sp" />
             </LinearLayout>
@@ -121,10 +122,10 @@
                     android:src="@drawable/img_chat_room_active" />
 
                 <TextView
-                    android:gravity="center"
                     android:id="@+id/tv_chatRoom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/chatroom"
                     android:textSize="10sp" />
             </LinearLayout>

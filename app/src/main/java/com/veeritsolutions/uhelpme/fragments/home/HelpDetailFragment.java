@@ -290,24 +290,19 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
             case R.id.btn_view_all_offer:
                 Utils.buttonClickEffect(view);
                 if (postedJobModel != null) {
-
                     getAllHelpOfferData();
                 }
                 break;
 
             case R.id.img_help_ProfilePic:
-
+                Utils.buttonClickEffect(view);
                 if (postedJobModel != null) {
-                    LoginUserModel loginUserModel = new LoginUserModel();
-                    loginUserModel.setClientId(postedJobModel.getClientId());
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(Constants.USER_DATA, loginUserModel);
-                    homeActivity.pushFragment(new OtherPersonProfileFragment(), true, false, bundle);
+                    CustomDialog.getInstance().showImageDialog(postedJobModel.getJobPhoto(), getActivity());
                 }
                 break;
 
             case R.id.tv_helpSeekerName:
-
+                Utils.buttonClickEffect(view);
                 if (postedJobModel != null) {
                     LoginUserModel loginUserModel = new LoginUserModel();
                     loginUserModel.setClientId(postedJobModel.getClientId());
