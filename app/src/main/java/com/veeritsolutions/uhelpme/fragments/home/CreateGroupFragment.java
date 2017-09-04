@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -45,7 +44,6 @@ import com.veeritsolutions.uhelpme.fragments.profile.OtherPersonProfileFragment;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
-import com.veeritsolutions.uhelpme.models.ChatGroupMemberModel;
 import com.veeritsolutions.uhelpme.models.ChatGroupModel;
 import com.veeritsolutions.uhelpme.models.ChatUsersListModel;
 import com.veeritsolutions.uhelpme.models.LoginUserModel;
@@ -240,7 +238,7 @@ public class CreateGroupFragment extends Fragment implements OnClickEvent, OnBac
 
                 ArrayList<LoginUserModel> list = (ArrayList<LoginUserModel>) mObject;
 
-                if (!list.isEmpty()) {
+                if (list != null && !list.isEmpty()) {
 
                     contactList.addAll(list);
                     LoginUserModel loginUser = contactList.get(0);
@@ -265,7 +263,7 @@ public class CreateGroupFragment extends Fragment implements OnClickEvent, OnBac
             case ChatGroupMemberInsert:
 
                 CustomDialog.getInstance().dismiss();
-                ChatGroupMemberModel chatGroupMemberModel = (ChatGroupMemberModel) mObject;
+                // ChatGroupMemberModel chatGroupMemberModel = (ChatGroupMemberModel) mObject;
                 homeActivity.popBackFragment();
                 break;
         }
@@ -484,20 +482,10 @@ public class CreateGroupFragment extends Fragment implements OnClickEvent, OnBac
                 //showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), false);
 
                 if (Build.VERSION.SDK_INT > 22) {
-                    // ContextCompat.checkSelfPermission(getContext(), permissionList.get(0));
-                    if (PermissionClass.checkPermission(homeActivity,
-                            PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList)) {
-                        // start cropping activity for pre-acquired image saved on the device
-                        CropImage.activity()
-                                .setGuidelines(CropImageView.Guidelines.ON)
-                                .setActivityTitle("Crop")
-                                .setRequestedSize(400, 400)
-                                .start(getContext(), CreateGroupFragment.this);
-                        //showImageSelect(homeActivity, getString(R.string.str_select_profile_photo), true);
-
-                    } /*else {
-                        PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList);
-                    }*/
+                    String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+                    //if (shouldShowRequestPermissionRationale(permissions))
+                    requestPermissions(permissions, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA);
                 } else {
                     // start cropping activity for pre-acquired image saved on the device
                     CropImage.activity()
@@ -579,17 +567,12 @@ public class CreateGroupFragment extends Fragment implements OnClickEvent, OnBac
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        List<String> shouldPermit = new ArrayList<>();
+        // List<String> shouldPermit = new ArrayList<>();
 
         if (requestCode == PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA) {
 
             if (grantResults.length > 0 || grantResults.length != 0) {
 
-                for (int i = 0; i < grantResults.length; i++) {
-                    //  permissions[i] = Manifest.permission.CAMERA; //for specific permission check
-                    grantResults[i] = PackageManager.PERMISSION_DENIED;
-                    shouldPermit.add(permissions[i]);
-                }
                 if (PermissionClass.verifyPermission(grantResults)) {
                     // start cropping activity for pre-acquired image saved on the device
                     CropImage.activity()
@@ -599,7 +582,11 @@ public class CreateGroupFragment extends Fragment implements OnClickEvent, OnBac
                             .start(getContext(), CreateGroupFragment.this);
                     //showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
                 } else {
-                    PermissionClass.checkPermission(homeActivity, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList);
+                    permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+                    //if (shouldShowRequestPermissionRationale(permissions))
+                    requestPermissions(permissions, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA);
+                    // PermissionClass.checkPermission(homeActivity, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList);
                 }
             }
         }

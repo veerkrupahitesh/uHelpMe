@@ -179,7 +179,6 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
             case R.id.lin_takePic:
 
                 Utils.buttonClickEffect(view);
-                //showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), false);
 
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
                     // ContextCompat.checkSelfPermission(getContext(), permissionList.get(0));
@@ -187,13 +186,7 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
                     //if (shouldShowRequestPermissionRationale(permissions))
                     requestPermissions(permissions, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA);
-                    /*if (PermissionClass.checkPermission(getContext(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList)) {
 
-                        showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
-
-                    }*/ /*else {
-                        PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList);
-                    }*/
                 } else {
                     // start cropping activity for pre-acquired image saved on the device
                     CropImage.activity()
