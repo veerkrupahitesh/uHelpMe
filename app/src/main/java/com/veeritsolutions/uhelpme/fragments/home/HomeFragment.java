@@ -314,7 +314,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
 
     // To animate view slide out from bottom to top
     public void slideToTop(View view) {
-        TranslateAnimation animate = new TranslateAnimation(0, 0, 0, 0);
+        TranslateAnimation animate = new TranslateAnimation(0, 0, view.getHeight(), 0);
         animate.setDuration(300);
         animate.setFillAfter(true);
         view.startAnimation(animate);
