@@ -139,7 +139,7 @@
     <string name="search_user">Search User</string>
     <string name="type_here">Type here…</string>
     <string name="group_members">Group Members</string>
-    <string name="category">Category:</string>
+    <string name="category">Category :</string>
     <string name="best_offer">Best Offer</string>
     <string name="location">Location</string>
     <string name="category_search">Category Search</string>
@@ -282,4 +282,6 @@
     <string name="str_confirm_pass_does_not_matches">Confirm password does not matches</string>
     <string name="str_enter_confirm_pass">Enter confirm password</string>
     <string name="str_terms_and_condtions">Accept the Terms and Conditions</string>
+    <string name="amount_">Amount :</string>
+    <string name="help_seeker">Help Seeker :</string>
 </resources>

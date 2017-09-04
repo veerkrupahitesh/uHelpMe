@@ -1,7 +1,8 @@
 package com.veeritsolutions.uhelpme.fragments.home;
 
 import android.Manifest;
-import android.app.Dialog;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -33,13 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.activity.HomeActivity;
@@ -51,6 +46,7 @@ import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
 import com.veeritsolutions.uhelpme.arview.ARView;
+import com.veeritsolutions.uhelpme.customdialog.CustomDialog;
 import com.veeritsolutions.uhelpme.fragments.profile.OtherPersonProfileFragment;
 import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
@@ -63,7 +59,6 @@ import com.veeritsolutions.uhelpme.models.PostedJobModel;
 import com.veeritsolutions.uhelpme.utility.Constants;
 import com.veeritsolutions.uhelpme.utility.Debug;
 import com.veeritsolutions.uhelpme.utility.EndlessRecyclerViewScrollListener;
-import com.veeritsolutions.uhelpme.utility.PermissionClass;
 import com.veeritsolutions.uhelpme.utility.Utils;
 
 import java.util.ArrayList;
@@ -294,8 +289,8 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
 
     private void hideViews() {
         //homeActivity.linFooterView.setVisibility(View.GONE);
-        homeActivity.linFooterView.setAnimation(animHide);
-               /* .animate()
+        homeActivity.linFooterView/*.setAnimation(animHide);*/
+                .animate()
                 .translationY(homeActivity.linFooterView.getHeight())
                 .setDuration(300)
                 .setListener(new AnimatorListenerAdapter() {
@@ -304,7 +299,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
                         super.onAnimationEnd(animation);
                         homeActivity.linFooterView.setVisibility(View.GONE);
                     }
-                });*/
+                });
         fabSearch.setVisibility(View.GONE);
         linSearchView.setVisibility(View.GONE);
 
@@ -312,18 +307,18 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
 
     private void showViews() {
 
-        homeActivity.linFooterView.setVisibility(View.VISIBLE);
-        homeActivity.linFooterView.setAnimation(animShow);
-               /* .animate()
+        // homeActivity.linFooterView.setVisibility(View.VISIBLE);
+        homeActivity.linFooterView/*.setAnimation(animShow);*/
+                .animate()
                 .translationY(0)
-                //.setDuration(1000)
+                .setDuration(300)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         homeActivity.linFooterView.setVisibility(View.VISIBLE);
                     }
-                });*/
+                });
         fabSearch.setVisibility(View.VISIBLE);
         if (isSearchClosed) {
             linSearchView.setVisibility(View.GONE);
@@ -478,7 +473,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
             case R.id.img_offer_search:
                 Utils.buttonClickEffect(view);
                 PostedJobModel postedJobModel = (PostedJobModel) view.getTag();
-                showMapDialog(postedJobModel);
+                CustomDialog.getInstance().showMapDialog(postedJobModel, getActivity());
                 break;
         }
     }
@@ -521,61 +516,6 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
             // hideScreen(arViewList);
         }
     }
-
-    private void showMapDialog(final PostedJobModel postedJobModel) {
-        if (postedJobModel != null) {
-            final Dialog dialog = new Dialog(getActivity(), R.style.mapStyle);
-                    /* Set Dialog width match parent */
-            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            //  dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.custom_dialog_map);
-            dialog.setCancelable(false);
-
-            TextView tvTitle = (TextView) dialog.findViewById(R.id.tv_dialogHeader);
-            tvTitle.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
-            tvTitle.setText(postedJobModel.getJobTitle());
-
-            ImageView imgClose = (ImageView) dialog.findViewById(R.id.img_close);
-            imgClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-
-            MapView mMapView;
-
-            mMapView = (MapView) dialog.findViewById(R.id.map);
-            mMapView.onCreate(dialog.onSaveInstanceState());
-            mMapView.onResume();// needed to get the map to display immediately
-            mMapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    mGoogleMap = googleMap;
-
-                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(postedJobModel.getAltitude(), postedJobModel.getLongitude())).title("Job location"));
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
-                            new LatLng(postedJobModel.getAltitude(), postedJobModel.getLongitude()), 5);
-                    mGoogleMap.animateCamera(cameraUpdate);
-                    mGoogleMap.setTrafficEnabled(true);
-                    mGoogleMap.setIndoorEnabled(true);
-                    mGoogleMap.setBuildingsEnabled(true);
-                    mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-
-                    List<String> permission = new ArrayList<>();
-                    permission.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
-                    permission.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
-                    permission.add(Manifest.permission.ACCESS_NETWORK_STATE);
-
-                    if (PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION, permission)) {
-                        mGoogleMap.setMyLocationEnabled(true);
-                    }
-                }
-            });
-        }
-    }
-
 
     private void hideScreen(final ArrayList<ARViewModel> arViewList) {
 

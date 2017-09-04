@@ -1,5 +1,6 @@
 package com.veeritsolutions.uhelpme.customdialog;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -10,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,18 +20,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.adapters.AdpAllHelpOffers;
 import com.veeritsolutions.uhelpme.enums.CalenderDateSelection;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.models.AllHelpOfferModel;
+import com.veeritsolutions.uhelpme.models.PostedJobModel;
 import com.veeritsolutions.uhelpme.utility.Constants;
-import com.veeritsolutions.uhelpme.utility.Debug;
+import com.veeritsolutions.uhelpme.utility.PermissionClass;
 import com.veeritsolutions.uhelpme.utility.Utils;
 
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -186,6 +192,59 @@ public class CustomDialog {
         }
     }
 
+    public void showMapDialog(final PostedJobModel postedJobModel, final Context context) {
+        if (postedJobModel != null) {
+            final Dialog dialog = new Dialog(context, R.style.mapStyle);
+                    /* Set Dialog width match parent */
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            //  dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.custom_dialog_map);
+            dialog.setCancelable(false);
+
+            TextView tvTitle = (TextView) dialog.findViewById(R.id.tv_dialogHeader);
+            tvTitle.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+            tvTitle.setText(postedJobModel.getJobTitle());
+
+            ImageView imgClose = (ImageView) dialog.findViewById(R.id.img_close);
+            imgClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+
+            MapView mMapView;
+
+            mMapView = (MapView) dialog.findViewById(R.id.map);
+            mMapView.onCreate(dialog.onSaveInstanceState());
+            mMapView.onResume();// needed to get the map to display immediately
+            mMapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    GoogleMap mGoogleMap = googleMap;
+
+                    mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(postedJobModel.getAltitude(), postedJobModel.getLongitude())).title("Job location"));
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(postedJobModel.getAltitude(), postedJobModel.getLongitude()), 5);
+                    mGoogleMap.animateCamera(cameraUpdate);
+                    mGoogleMap.setTrafficEnabled(true);
+                    mGoogleMap.setIndoorEnabled(true);
+                    mGoogleMap.setBuildingsEnabled(true);
+                    mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
+                    List<String> permission = new ArrayList<>();
+                    permission.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
+                    permission.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
+                    permission.add(Manifest.permission.ACCESS_NETWORK_STATE);
+
+                    if (PermissionClass.checkPermission(context, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION, permission)) {
+                        mGoogleMap.setMyLocationEnabled(true);
+                    }
+                }
+            });
+        }
+    }
 
     public void showCreateGroup(Context mContext, boolean mIsCancelable) {
 

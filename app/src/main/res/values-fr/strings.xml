@@ -136,7 +136,7 @@
     <string name="search_user">Rechercher l\'utilisateur</string>
     <string name="type_here">Écrivez ici…</string>
     <string name="group_members">Les membres du groupe</string>
-    <string name="category">Catégorie:</string>
+    <string name="category">Catégorie :</string>
     <string name="best_offer">Meilleure offre</string>
     <string name="location">Emplacement</string>
     <string name="category_search">Catégorie Recherche</string>
@@ -285,4 +285,6 @@
     <string name="str_confirm_pass_does_not_matches">Confirmer le mot de passe ne correspond pas</string>
     <string name="str_enter_confirm_pass">Entrez le mot de passe de confirmation</string>
     <string name="str_terms_and_condtions">Acceptez les termes et conditions</string>
+    <string name="amount_">montant :</string>
+    <string name="help_seeker">Chercheur d\'aide :</string>
 </resources>

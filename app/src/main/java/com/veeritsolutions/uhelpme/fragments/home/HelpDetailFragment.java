@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,7 +26,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.veeritsolutions.uhelpme.MyApplication;
@@ -57,7 +55,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 
 /**
@@ -70,20 +67,20 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
     private View rootView;
     private ImageView imgHelpBannerPic, imgHelpPic, imgCategoryIcon;
     private TextView tvHelpTitle, tvHelpCategory, tvHelpDetails, tvBestOffer, tvCategoryLabel,
-            tvBestOfferLabel, tvLocationLabel, tvHelpAmount;
+            tvBestOfferLabel, tvLocationLabel, tvAmountLabel, tvHelpAmount, tvHelpSeekerLabel, tvHelpSeekerName;
     private Button btnVieAllOffer;
-    private FrameLayout mapFrameLayout;
+    // private FrameLayout mapFrameLayout;
     private MapView mMapView;
 
     private Map<String, String> params;
     private Bundle bundle;
     private PostedJobModel postedJobModel;
-    private SupportMapFragment spFragment;
+    //  private SupportMapFragment spFragment;
     private float latitude, longitude;
     private GoogleMap mGoogleMap;
     private LoginUserModel loginUserModel;
-    private View view;
-    private ArrayList<AllHelpOfferModel> chatListModels;
+    //  private View view;
+    // private ArrayList<AllHelpOfferModel> chatListModels;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -123,8 +120,17 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
         tvHelpTitle = (TextView) rootView.findViewById(R.id.tv_helpTitle);
         tvHelpTitle.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
 
+        tvAmountLabel = (TextView) rootView.findViewById(R.id.tv_amount);
+        tvAmountLabel.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+
         tvHelpAmount = (TextView) rootView.findViewById(R.id.tv_helpAmount);
         tvHelpAmount.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+
+        tvHelpSeekerLabel = (TextView) rootView.findViewById(R.id.tv_helpSeeker);
+        tvHelpSeekerLabel.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
+
+        tvHelpSeekerName = (TextView) rootView.findViewById(R.id.tv_helpSeekerName);
+        tvHelpSeekerName.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
 
         tvCategoryLabel = (TextView) rootView.findViewById(R.id.tv_category);
         tvCategoryLabel.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
@@ -207,6 +213,7 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
     private void setData(PostedJobModel postedJobModel) {
 
         tvHelpTitle.setText(postedJobModel.getJobTitle());
+        tvHelpSeekerName.setText(postedJobModel.getFirstName() + " " + postedJobModel.getLastName());
         tvHelpCategory.setText(postedJobModel.getCategoryName());
         tvHelpDetails.setText(postedJobModel.getJobDescription());
         tvBestOffer.setText("$ " + postedJobModel.getBestOffer());
@@ -298,6 +305,17 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
                     homeActivity.pushFragment(new OtherPersonProfileFragment(), true, false, bundle);
                 }
                 break;
+
+            case R.id.tv_helpSeekerName:
+
+                if (postedJobModel != null) {
+                    LoginUserModel loginUserModel = new LoginUserModel();
+                    loginUserModel.setClientId(postedJobModel.getClientId());
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Constants.USER_DATA, loginUserModel);
+                    homeActivity.pushFragment(new OtherPersonProfileFragment(), true, false, bundle);
+                }
+                break;
         }
 
     }
@@ -350,6 +368,12 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
         permission.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
         permission.add(Manifest.permission.ACCESS_NETWORK_STATE);
 
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                CustomDialog.getInstance().showMapDialog(postedJobModel, getActivity());
+            }
+        });
         if (PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION, permission)) {
             mGoogleMap.setMyLocationEnabled(true);
         }
@@ -359,21 +383,13 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        List<String> shouldPermit = new ArrayList<>();
+        // List<String> shouldPermit = new ArrayList<>();
 
         if (requestCode == PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION) {
 
             if (grantResults.length > 0 || grantResults.length != PackageManager.PERMISSION_GRANTED) {
-
-                for (int i = 0; i < grantResults.length; i++) {
-                    //  permissions[i] = Manifest.permission.CAMERA; //for specific permission check
-                    grantResults[i] = PackageManager.PERMISSION_DENIED;
-                    shouldPermit.add(permissions[i]);
-                    if (Objects.equals(permissions[i], Manifest.permission.ACCESS_COARSE_LOCATION)
-                            && Objects.equals(permissions[i], Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        mGoogleMap.setMyLocationEnabled(true);
-                    }
-                }
+                if (PermissionClass.verifyPermission(grantResults))
+                    mGoogleMap.setMyLocationEnabled(true);
             }
         }
     }
@@ -416,7 +432,7 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
     }
 
     private void floodFill(Bitmap bmp, Point point, int targetColor, int newColor) {
-        Queue<Point> q = new LinkedList<Point>();
+        Queue<Point> q = new LinkedList<>();
         q.add(point);
         while (q.size() > 0) {
             Point n = q.poll();
@@ -480,32 +496,6 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
             super.onPostExecute(myBitmap);
 
             imgCategoryIcon.setImageBitmap(myBitmap);
-
-          /*  if (myBitmap != null) {
-
-                Point point = new Point();
-                point.x = Math.min(imgCategoryIcon.getLeft(), myBitmap.getWidth());
-                point.y = imgCategoryIcon.getRight();
-                Paint paint = new Paint();
-                paint.setColor(Color.parseColor("#E47CA8"));
-
-                Paint paint1 = new Paint();
-                paint1.setColor(Color.parseColor(postedJobModel[0].getColorCode()));
-
-                floodFill(myBitmap, point, paint.getColor(), paint1.getColor());
-
-              *//*  int[] pixels = new int[myBitmap.getHeight() * myBitmap.getWidth()];
-                myBitmap.getPixels(pixels, 0, myBitmap.getWidth(), 0, 0, myBitmap.getWidth(), myBitmap.getHeight());
-                for (int i = 0; i < pixels.length; i++) {
-                    if (pixels[i] == Color.parseColor("#E47CA8")) {
-                        pixels[i] = Color.parseColor(postedJobModel[0].getColorCode());
-                    }
-                }
-                myBitmap.setPixels(pixels, 0, myBitmap.getWidth(), 0, 0, myBitmap.getWidth(), myBitmap.getHeight());*//*
-            } else {
-
-            }
-*/
         }
     }
 }
