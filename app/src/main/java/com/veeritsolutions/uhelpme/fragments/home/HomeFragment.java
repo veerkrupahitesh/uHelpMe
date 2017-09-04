@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
@@ -25,8 +24,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,7 +44,6 @@ import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
 import com.veeritsolutions.uhelpme.arview.ARView;
 import com.veeritsolutions.uhelpme.customdialog.CustomDialog;
-import com.veeritsolutions.uhelpme.fragments.profile.OtherPersonProfileFragment;
 import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
@@ -113,7 +109,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     private ArrayList<ARViewModel> arViewList;
     private ArrayList<String> category = new ArrayList<>();
     private String lang = "en";
-    private Animation animShow, animHide;
+    //private Animation animShow, animHide;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -163,8 +159,8 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
         homeActivity.tvDashBoard.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
         homeActivity.tvChatRoom.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
 
-        animShow = AnimationUtils.loadAnimation(getActivity(), R.anim.view_show);
-        animHide = AnimationUtils.loadAnimation(getActivity(), R.anim.view_hide);
+        //animShow = AnimationUtils.loadAnimation(getActivity(), R.anim.view_show);
+        //animHide = AnimationUtils.loadAnimation(getActivity(), R.anim.view_hide);
 
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
@@ -213,7 +209,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
         recyclerViewCategory.setLayoutManager(new LinearLayoutManager(homeActivity, LinearLayoutManager.HORIZONTAL, false));
 
         recyclerViewCategory.getItemAnimator().setAddDuration(1000);
-        recyclerViewCategory.getItemAnimator().setRemoveDuration(10000);
+        recyclerViewCategory.getItemAnimator().setRemoveDuration(1000);
         recyclerViewCategory.getItemAnimator().setMoveDuration(1000);
         recyclerViewCategory.getItemAnimator().setChangeDuration(1000);
 
@@ -378,11 +374,12 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
                 o = view.getTag(R.id.img_offer);
                 if (o != null) {
                     postedJobModel = (PostedJobModel) o;
-                    LoginUserModel loginUserModel = new LoginUserModel();
+                    CustomDialog.getInstance().showImageDialog(postedJobModel.getJobPhoto(), getActivity());
+                   /* LoginUserModel loginUserModel = new LoginUserModel();
                     loginUserModel.setClientId(postedJobModel.getClientId());
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(Constants.USER_DATA, loginUserModel);
-                    homeActivity.pushFragment(new OtherPersonProfileFragment(), true, false, bundle);
+                    homeActivity.pushFragment(new OtherPersonProfileFragment(), true, false, bundle);*/
                 }
                 break;
 
@@ -451,16 +448,6 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
             case R.id.fab_mapView:
                 Utils.buttonClickEffect(view);
                 homeActivity.pushFragment(new SearchFragment(), true, false, null);
-//                homeActivity.imgHome.setImageResource(R.drawable.img_home_inactive);
-//                homeActivity.imgSearch.setImageResource(R.drawable.img_search_tabbar_active);
-//                homeActivity.imgDashbord.setImageResource(R.drawable.img_dashboard_inactive);
-//                homeActivity.imgChatRoom.setImageResource(R.drawable.img_chat_room_inactive);
-//                homeActivity.imgHelpMe.setImageResource(R.drawable.img_helpme);
-//
-//                homeActivity.tvHome.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                homeActivity.tvSearch.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
-//                homeActivity.tvDashBoard.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                homeActivity.tvChatRoom.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
                 manageFABsearchView();
                 break;
 
@@ -505,8 +492,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
                     Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED);
 
             if (!hasPermission_camera) {
-                ActivityCompat.requestPermissions(homeActivity,
-                        new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISIONS);
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISIONS);
             } else {
                 getARViewData();
                 // hideScreen(arViewList);
@@ -776,6 +762,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
                     ToastHelper.getInstance().showMessage("The app was not allowed to write to your storage. Hence, it cannot function properly. Please consider granting it this permission");
                     //Toast.makeText(actSplash.this, "The app was not allowed to write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
                 }
+                break;
             }
         }
     }

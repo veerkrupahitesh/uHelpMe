@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -53,10 +54,6 @@ public class CustomDialog {
     private static final int PREV_MONTH = 1;
     private static CustomDialog ourInstance;
     private Dialog mDialog;
-    private float minRate = 0;
-    private float maxRate = 0;
-    private int position = 0;
-    private int sortBy, sortType;
     private int mSelectedYear, mSelectedMonth, mSelectedDay;
 
     private CustomDialog() {
@@ -246,61 +243,26 @@ public class CustomDialog {
         }
     }
 
-    public void showCreateGroup(Context mContext, boolean mIsCancelable) {
+    public void showImageDialog(String imageUrl, final Context context) {
+        if (imageUrl != null) {
+            mDialog = new Dialog(context, R.style.mapStyle);
+                    /* Set Dialog width match parent */
+            mDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            //  dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            mDialog.setContentView(R.layout.custom_dialog_imageview);
+            mDialog.setCancelable(true);
 
-        mDialog = new Dialog(mContext, R.style.dialogStyle);
-        //  @SuppressLint("InflateParams")
-        //  View dataView = LayoutInflater.from(mContext).inflate(R.layout.custom_dialog_alert, null, false);
-        mDialog.setContentView(R.layout.custom_dialog_create_group);
-
-         /* Set Dialog width match parent */
-        mDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mDialog.getWindow().getAttributes().windowAnimations = R.style.animationdialog;
-        //mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-        TextView mDialogTitle = (TextView) mDialog.findViewById(R.id.tv_dialogHeader);
-        mDialogTitle.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-
-        final EditText edtEnterOffer = (EditText) mDialog.findViewById(R.id.edt_groupName);
-        //TextView tvOk = (TextView) mDialog.findViewById(R.id.tv_ok);
-        edtEnterOffer.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-
-//        Button btnCancel = (Button) mDialog.findViewById(R.id.btn_actionCancel);
-//        btnCancel.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-
-        final Button btnOk = (Button) mDialog.findViewById(R.id.btn_createGroup);
-        btnOk.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-        btnOk.setTag(edtEnterOffer.getText().toString().trim());
-
-        edtEnterOffer.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                btnOk.setTag(edtEnterOffer.getText().toString().trim());
-            }
-        });
-
-
-        /*btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });*/
-        mDialog.setCancelable(mIsCancelable);
-
-        if (mDialog != null) {
-            if (!isDialogShowing()) {
-                mDialog.show();
+            ImageView imgHelpPhoto = (ImageView) mDialog.findViewById(R.id.img_help_ProfilePic);
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.color.colorHint)
+                    .error(R.color.colorHint)
+                    .into(imgHelpPhoto);
+            //Utils.setImage(imageUrl, R.color.colorHint, imgHelpPhoto);
+            if (mDialog != null) {
+                if (!isDialogShowing()) {
+                    mDialog.show();
+                }
             }
         }
     }
@@ -328,6 +290,7 @@ public class CustomDialog {
         int mYear = mCurrentDate.get(Calendar.YEAR);
         int mMonth = mCurrentDate.get(Calendar.MONTH);
         int mDay = mCurrentDate.get(Calendar.DAY_OF_MONTH);
+
 
         final DatePickerDialog mDatePicker = new DatePickerDialog(context, R.style.DatePickerDialogTheme,
                 new DatePickerDialog.OnDateSetListener() {
@@ -404,50 +367,6 @@ public class CustomDialog {
             e.printStackTrace();
         }
 
-    }
-
-    public void showActionDialog(Context mContext, String mTitle, String messaage, boolean mIsCancelable) {
-
-        mDialog = new Dialog(mContext, R.style.dialogStyle);
-        // @SuppressLint("InflateParams")
-        // View dataView = LayoutInflater.from(mContext).inflate(R.layout.custom_dialog_action_dialog, null, false);
-        mDialog.setContentView(R.layout.custom_dialog_action_dialog);
-
-        /* Set Dialog width match parent */
-        mDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        // mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        mDialog.setCancelable(mIsCancelable);
-
-        TextView tvTitle = (TextView) mDialog.findViewById(R.id.tv_actionTitle);
-        tvTitle.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-        tvTitle.setText(mTitle);
-
-        TextView tvMessage = (TextView) mDialog.findViewById(R.id.tv_actionMessage);
-        tvMessage.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-        tvMessage.setText(messaage);
-
-        TextView tvOK = (TextView) mDialog.findViewById(R.id.btn_actionOk);
-        tvOK.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-
-        TextView tvCancel = (TextView) mDialog.findViewById(R.id.btn_actionCancel);
-        tvCancel.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-
-        tvCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
-        try {
-            if (mDialog != null) {
-                if (!isDialogShowing()) {
-                    mDialog.show();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void showAllHelpOffers(Context mContext, boolean mIsCancelable, ArrayList<AllHelpOfferModel> allHelpOfferList) {

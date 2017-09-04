@@ -42,12 +42,12 @@
         <item name="@android:windowExitAnimation">@anim/dialog_out</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textColorSecondary">@color/Black</item>
         <item name="android:textColorPrimary">@android:color/black</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:textColorSecondary">@color/Black</item>
         <item name="android:textColorPrimary">@android:color/black</item>
     </style>
@@ -118,8 +118,8 @@
 
     <style name="customRatingBar" parent="@style/Widget.AppCompat.RatingBar.Small">
         <item name="android:progressDrawable">@drawable/drw_profile_rating</item>
-       <!-- <item name="android:minHeight">30dp</item>
-        <item name="android:maxHeight">30dp</item>-->
+        <!-- <item name="android:minHeight">30dp</item>
+         <item name="android:maxHeight">30dp</item>-->
     </style>
 
     <style name="ReviewRatingBar" parent="@android:style/Widget.RatingBar">
@@ -132,5 +132,30 @@
 
         <item name="android:dropDownSelector">@drawable/img_arrow_selectbox</item>
     </style>
+
+
+    <!--  for transparency
+    100% — FF
+     95% — F2
+     90% — E6
+     85% — D9
+     80% — CC
+     75% — BF
+     70% — B3
+     65% — A6
+     60% — 99
+     55% — 8C
+     50% — 80
+     45% — 73
+     40% — 66
+     35% — 59
+     30% — 4D
+     25% — 40
+     20% — 33
+     15% — 26
+     10% — 1A
+     5% — 0D
+     0% — 00
+     -->
 
 </resources>

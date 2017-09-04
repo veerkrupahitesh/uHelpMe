@@ -29,62 +29,74 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/img_logo"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/img_logo" />
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txv_show"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/str_view"
-            android:textSize="20sp" />
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/img_logo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/img_logo" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/colorTextGray" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
 
-    <android.support.v7.widget.AppCompatRatingBar
-        android:id="@+id/rb_rating"
-        style="@style/ReviewRatingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="5dp" />
+                <TextView
+                    android:id="@+id/txv_show"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/str_view"
+                    android:textSize="20sp" />
+            </LinearLayout>
 
-    <EditText
-        android:id="@+id/edt_review"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/drw_round_corner_grey"
-        android:gravity="top"
-        android:hint="@string/your_thoughts"
-        android:inputType="textCapWords"
-        android:maxLength="500"
-        android:padding="5dp"
-        android:textSize="13sp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/colorTextGray" />
 
-    <Button
-        android:id="@+id/btn_submit"
-        style="@style/buttonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
-        android:onClick="onClick"
-        android:text="@string/submit" />
+            <android.support.v7.widget.AppCompatRatingBar
+                android:id="@+id/rb_rating"
+                style="@style/ReviewRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp" />
+
+            <EditText
+                android:id="@+id/edt_review"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_margin="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/drw_round_corner_grey"
+                android:gravity="top"
+                android:hint="@string/your_thoughts"
+                android:inputType="textCapWords"
+                android:maxLength="500"
+                android:padding="5dp"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/btn_submit"
+                style="@style/buttonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:onClick="onClick"
+                android:text="@string/submit" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
