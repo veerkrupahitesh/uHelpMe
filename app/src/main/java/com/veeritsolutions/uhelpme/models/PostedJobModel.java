@@ -139,6 +139,12 @@ public class PostedJobModel implements Serializable {
     @SerializedName("ChatGroupId")
     @Expose
     private String chatGroupId = "";
+    @SerializedName("JobTimeFlag")
+    @Expose
+    private int JobTimeFlag = 0;
+    @SerializedName("JobAmountFlag")
+    @Expose
+    private int JobAmountFlag = 0;
 
 
     public int getPosition() {
@@ -484,5 +490,21 @@ public class PostedJobModel implements Serializable {
 
     public void setJobPostTimeDiff(String jobPostTimeDiff) {
         this.jobPostTimeDiff = jobPostTimeDiff;
+    }
+
+    public int getJobTimeFlag() {
+        return JobTimeFlag;
+    }
+
+    public void setJobTimeFlag(int jobTimeFlag) {
+        JobTimeFlag = jobTimeFlag;
+    }
+
+    public int getJobAmountFlag() {
+        return JobAmountFlag;
+    }
+
+    public void setJobAmountFlag(int jobAmountFlag) {
+        JobAmountFlag = jobAmountFlag;
     }
 }

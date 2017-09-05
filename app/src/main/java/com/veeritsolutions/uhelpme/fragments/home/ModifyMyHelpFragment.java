@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +43,6 @@ import com.veeritsolutions.uhelpme.utility.Debug;
 import com.veeritsolutions.uhelpme.utility.Utils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,8 +61,35 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
     private TextView tvUhelpMe, tvHelpPostDate, tvHelpPostHours;
     private Spinner spinner;
     private LinearLayout linSelectDate, linSelectHours;
-    private ImageView imgHelpPhoto;
+    AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+            if (position == 1) {
+
+                //tvHelpPostHours.setVisibility(View.VISIBLE);
+                linSelectHours.setVisibility(View.VISIBLE);
+                linSelectDate.setVisibility(View.GONE);
+                tvHelpPostHours.setText("");
+                tvHelpPostDate.setText("");
+                //CustomDialog.getInstance().showTimePickerDialog(homeActivity, tvHelpPostHours);
+
+            } else if (position == 2) {
+                linSelectHours.setVisibility(View.VISIBLE);
+                linSelectDate.setVisibility(View.VISIBLE);
+                tvHelpPostHours.setText("");
+                tvHelpPostDate.setText("");
+                // tvHelpPostHours.setVisibility(View.VISIBLE);
+                // tvHelpPostDate.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
+    private ImageView imgHelpPhoto;
     private HomeActivity homeActivity;
     private PostedJobModel postedJobModel;
     private Map<String, String> params;
@@ -151,7 +175,6 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
 
         Utils.setImage(postedJobModel.getJobPhoto(), R.drawable.img_user_placeholder, imgHelpPhoto);
     }
-
 
     @Override
     public void onSuccess(RequestCode mRequestCode, Object mObject) {
@@ -375,7 +398,7 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
 
         @Override
         protected Void doInBackground(Void... params) {
-            URL imgValue = null;
+            URL imgValue;
             Debug.trace("taking", "2");
             try {
                 imgValue = new URL(postedJobModel.getJobPhoto());
@@ -393,12 +416,6 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
 
                 Debug.trace("Encoded image is : ===== " + base64Image);
 
-            } catch (MalformedURLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -411,34 +428,5 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
             CustomDialog.getInstance().dismiss();
         }
     }
-
-    AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            if (position == 1) {
-
-                //tvHelpPostHours.setVisibility(View.VISIBLE);
-                linSelectHours.setVisibility(View.VISIBLE);
-                linSelectDate.setVisibility(View.GONE);
-                tvHelpPostHours.setText("");
-                tvHelpPostDate.setText("");
-                //CustomDialog.getInstance().showTimePickerDialog(homeActivity, tvHelpPostHours);
-
-            } else if (position == 2) {
-                linSelectHours.setVisibility(View.VISIBLE);
-                linSelectDate.setVisibility(View.VISIBLE);
-                tvHelpPostHours.setText("");
-                tvHelpPostDate.setText("");
-                // tvHelpPostHours.setVisibility(View.VISIBLE);
-                // tvHelpPostDate.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-    };
 }
 
