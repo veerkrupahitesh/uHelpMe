@@ -65,6 +65,9 @@ public class DashboardMyOfferFragment extends Fragment implements OnBackPressedE
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        homeActivity = (HomeActivity) getActivity();
+        loginUserModel = LoginUserModel.getLoginUserModel();
+
         rootView = inflater.inflate(R.layout.fragment_dashboard_myoffer, container, false);
 
         recyclerViewDashboard = (RecyclerView) rootView.findViewById(R.id.recyclerView_dash_myoffer);

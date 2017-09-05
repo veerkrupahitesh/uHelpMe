@@ -290,4 +290,6 @@
     <string name="str_fixed_rate">Fixed rate</string>
     <string name="str_houly_rate">Hourly rate</string>
     <string name="str_now">Now</string>
+    <string name="groups">Groups</string>
+    <string name="user">Users</string>
 </resources>

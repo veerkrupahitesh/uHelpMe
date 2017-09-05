@@ -44,7 +44,9 @@ import com.veeritsolutions.uhelpme.api.ApiList;
 import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
+import com.veeritsolutions.uhelpme.fragments.home.ChatDashboardFragment;
 import com.veeritsolutions.uhelpme.fragments.home.ChatRoomFragment;
+import com.veeritsolutions.uhelpme.fragments.home.DashboardChatUserFragment;
 import com.veeritsolutions.uhelpme.fragments.home.DashboardFragment;
 import com.veeritsolutions.uhelpme.fragments.home.HomeFragment;
 import com.veeritsolutions.uhelpme.fragments.home.PostHelpBasicInfoFragment;
@@ -346,11 +348,11 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
                 break;
 
             case R.id.lin_chatroom:
-
+                //ChatRoomFragment
                 Utils.buttonClickEffect(view);
-                if (!(currentFragment instanceof ChatRoomFragment)) {
+                if (!(currentFragment instanceof ChatDashboardFragment)) {
                     removeAllFragment();
-                    pushFragment(new ChatRoomFragment(), true, false, null);
+                    pushFragment(new ChatDashboardFragment(), true, false, null);
                 }
 //                imgHome.setImageResource(R.drawable.img_home_inactive);
 //                imgSearch.setImageResource(R.drawable.img_search_tabbar_inactive);
