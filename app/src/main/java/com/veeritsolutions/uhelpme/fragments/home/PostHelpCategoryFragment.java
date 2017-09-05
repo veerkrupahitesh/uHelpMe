@@ -25,12 +25,10 @@ import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
 import com.veeritsolutions.uhelpme.fragments.profile.PackagesFragment;
-import com.veeritsolutions.uhelpme.helper.PrefHelper;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
 import com.veeritsolutions.uhelpme.models.CategoryModel;
-import com.veeritsolutions.uhelpme.models.LoginUserModel;
 import com.veeritsolutions.uhelpme.utility.Constants;
 import com.veeritsolutions.uhelpme.utility.Utils;
 
@@ -56,7 +54,7 @@ public class PostHelpCategoryFragment extends Fragment implements DataObserver, 
     private AdpCategory adpCategory;
     private ArrayList<CategoryModel> categoryModelsList;
     private CategoryModel categoryModel;
-    private LoginUserModel loginUserModel;
+    // private LoginUserModel loginUserModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +62,7 @@ public class PostHelpCategoryFragment extends Fragment implements DataObserver, 
 
         homeActivity = (HomeActivity) getActivity();
         bundle = getArguments();
-        loginUserModel = LoginUserModel.getLoginUserModel();
+        //  loginUserModel = LoginUserModel.getLoginUserModel();
     }
 
     @Nullable

@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -25,7 +24,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.veeritsolutions.uhelpme.MyApplication;
@@ -39,9 +37,6 @@ import com.veeritsolutions.uhelpme.listener.OnClickEvent;
 import com.veeritsolutions.uhelpme.utility.PermissionClass;
 import com.veeritsolutions.uhelpme.utility.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -53,16 +48,16 @@ public class PostHelpMapFragment extends Fragment implements OnClickEvent, DataO
     int PLACE_PICKER_REQUEST = 1;
     private View rootView;
     private TextView tvUhelpMe, tvYourLocation, tvLocation;
-    private FrameLayout mapFrameLayout;
+    //  private FrameLayout mapFrameLayout;
     private Button btnNextStep;
     private MapView mMapView;
     private GoogleMap mGoogleMap;
     // object and variable declaration
     private HomeActivity homeActivity;
-    private SupportMapFragment spFragment;
+    // private SupportMapFragment spFragment;
     private float latitude, longitude;
     private Bundle bundle;
-    private View view;
+    // private View view;
     private PlacePicker.IntentBuilder builder;
 
     @Override
@@ -201,33 +196,25 @@ public class PostHelpMapFragment extends Fragment implements OnClickEvent, DataO
         mGoogleMap.setBuildingsEnabled(true);
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
-        List<String> permission = new ArrayList<>();
-        permission.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
-        permission.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
-        permission.add(Manifest.permission.ACCESS_NETWORK_STATE);
-
-        if (PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION, permission)) {
-            mGoogleMap.setMyLocationEnabled(true);
-        }
+        String[] permission = new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_NETWORK_STATE};
+        requestPermissions(permission, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        List<String> shouldPermit = new ArrayList<>();
+        //  List<String> shouldPermit = new ArrayList<>();
 
         if (requestCode == PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION) {
 
             if (grantResults.length > 0 || grantResults.length != PackageManager.PERMISSION_GRANTED) {
 
-                for (int i = 0; i < grantResults.length; i++) {
-                    //  permissions[i] = Manifest.permission.CAMERA; //for specific permission check
-                    grantResults[i] = PackageManager.PERMISSION_DENIED;
-                    shouldPermit.add(permissions[i]);
-                    if (permissions[i] == Manifest.permission.ACCESS_COARSE_LOCATION
-                            && permissions[i] == Manifest.permission.ACCESS_FINE_LOCATION) {
-                        mGoogleMap.setMyLocationEnabled(true);
-                    }
+                if (PermissionClass.verifyPermission(grantResults)) {
+                    mGoogleMap.setMyLocationEnabled(true);
+                } else {
+                    requestPermissions(permissions, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION);
                 }
             }
         }

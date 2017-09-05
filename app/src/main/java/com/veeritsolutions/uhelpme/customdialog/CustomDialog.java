@@ -470,13 +470,14 @@ public class CustomDialog {
                                 if (selectedHour < hour[0]) {
                                     ToastHelper.getInstance().showMessage(context.getString(R.string.valid_hours));
                                 } else {
-                                    textView.setText(String.valueOf(selectedHour - hour[0]));
+                                    textView.setText(String.format("%02d:%02d:%02d", selectedHour, selectedMinute, seconds[0]));
                                 }
 
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
                         } else if (timeFormat == 2) {
+
                             hour[0] = selectedHour;
                             minute[0] = selectedMinute;
 

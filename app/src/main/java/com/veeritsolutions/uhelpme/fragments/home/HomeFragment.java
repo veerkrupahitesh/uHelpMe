@@ -285,7 +285,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     private void hideViews() {
         // Utils.slideDown(homeActivity.linFooterView, getActivity());
         slideToBottom(homeActivity.linFooterView);
-
+        //slideToBottom(appBarLayout);
         fabSearch.setVisibility(View.GONE);
         linSearchView.setVisibility(View.GONE);
 
@@ -294,7 +294,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     private void showViews() {
         //Utils.slideUP(homeActivity.linFooterView, getActivity());
         slideToTop(homeActivity.linFooterView);
-
+        //slideToTop(appBarLayout);
         fabSearch.setVisibility(View.VISIBLE);
         if (isSearchClosed) {
             linSearchView.setVisibility(View.GONE);

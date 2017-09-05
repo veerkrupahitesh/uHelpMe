@@ -284,4 +284,10 @@
     <string name="str_terms_and_condtions">Accept the Terms and Conditions</string>
     <string name="amount_">Amount :</string>
     <string name="help_seeker">Help Seeker :</string>
+    <string name="str_upload_photos">Upload Photo</string>
+    <string name="str_maximun_photos">Maximum four photos allowed to upload</string>
+    <string name="str_select_amount">Select amount rate</string>
+    <string name="str_fixed_rate">Fixed rate</string>
+    <string name="str_houly_rate">Hourly rate</string>
+    <string name="str_now">Now</string>
 </resources>

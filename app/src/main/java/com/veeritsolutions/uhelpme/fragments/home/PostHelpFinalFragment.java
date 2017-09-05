@@ -1,7 +1,6 @@
 package com.veeritsolutions.uhelpme.fragments.home;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -46,6 +45,7 @@ import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
 import com.veeritsolutions.uhelpme.models.CategoryModel;
 import com.veeritsolutions.uhelpme.models.ChatModel;
+import com.veeritsolutions.uhelpme.models.HelpPicsModel;
 import com.veeritsolutions.uhelpme.models.LoginUserModel;
 import com.veeritsolutions.uhelpme.models.PostedJobModel;
 import com.veeritsolutions.uhelpme.utility.Constants;
@@ -64,22 +64,24 @@ import java.util.Map;
 public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnBackPressedEvent,
         DataObserver, RewardedVideoAdListener {
 
+    private final CharSequence[] options = {"Watch Video", "Buy Points", "Cancel"};
     private View rootView;
     private TextView tvUhelpMe, tvHelpPostDate, tvHelpPostHours, tvFinally;
-    private Spinner spinner;
+    private Spinner spTime, spAmount;
     private LinearLayout linSelectDate, linSelectHours;
     private EditText edtAmount;
     private Button btnNextStep;
-
     private HomeActivity homeActivity;
     private Bundle bundle;
     private List<String> dateSelectionList;
+    private List<String> amountSelectionList;
     // Firebase variables and objects
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReferenceGroup;
     private LoginUserModel loginUserModel;
-    final CharSequence[] options = {"Watch Video", "Buy Points", "Cancel"};
     private RewardedVideoAd mRewardedVideoAd;
+    private int flagAmount;
+    private ArrayList<HelpPicsModel> helpPicsList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,10 +89,20 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
 
         homeActivity = (HomeActivity) getActivity();
         bundle = getArguments();
+        if (bundle != null) {
+            helpPicsList = (ArrayList<HelpPicsModel>) bundle.getSerializable(Constants.BASE_64_IMAGE);
+        }
         dateSelectionList = new ArrayList<>();
         dateSelectionList.add(getString(R.string.select_time_limits));
         dateSelectionList.add(getString(R.string.today));
         dateSelectionList.add(getString(R.string.other_day));
+        dateSelectionList.add(getString(R.string.str_now));
+
+        amountSelectionList = new ArrayList<>();
+        amountSelectionList.add(getString(R.string.str_select_amount));
+        amountSelectionList.add(getString(R.string.str_fixed_rate));
+        amountSelectionList.add(getString(R.string.str_houly_rate));
+
         firebaseDatabase = FirebaseDatabase.getInstance(ServerConfig.FCM_APP_URL);
         loginUserModel = LoginUserModel.getLoginUserModel();
         // Initialize the Mobile Ads SDK.
@@ -135,28 +147,31 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
         linSelectDate = (LinearLayout) rootView.findViewById(R.id.lin_selectDate);
         linSelectHours = (LinearLayout) rootView.findViewById(R.id.lin_selectHours);
 
-        spinner = (Spinner) rootView.findViewById(R.id.sp_timeLimits);
-        spinner.setAdapter(new SpinnerAdapter(homeActivity, R.layout.spinner_row_list, dateSelectionList));
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spTime = (Spinner) rootView.findViewById(R.id.sp_timeLimits);
+        spTime.setAdapter(new SpinnerAdapter(homeActivity, R.layout.spinner_row_list, dateSelectionList));
+        spTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                if (position == 1) {
+                switch (position) {
+                    case 1:
+                        linSelectHours.setVisibility(View.VISIBLE);
+                        linSelectDate.setVisibility(View.GONE);
+                        tvHelpPostHours.setText("");
+                        tvHelpPostDate.setText("");
+                        break;
 
-                    //tvHelpPostHours.setVisibility(View.VISIBLE);
-                    linSelectHours.setVisibility(View.VISIBLE);
-                    linSelectDate.setVisibility(View.GONE);
-                    tvHelpPostHours.setText("");
-                    tvHelpPostDate.setText("");
-                    //CustomDialog.getInstance().showTimePickerDialog(homeActivity, tvHelpPostHours);
+                    case 2:
+                        linSelectHours.setVisibility(View.VISIBLE);
+                        linSelectDate.setVisibility(View.VISIBLE);
+                        tvHelpPostHours.setText("");
+                        tvHelpPostDate.setText("");
+                        break;
 
-                } else if (position == 2) {
-                    linSelectHours.setVisibility(View.VISIBLE);
-                    linSelectDate.setVisibility(View.VISIBLE);
-                    tvHelpPostHours.setText("");
-                    tvHelpPostDate.setText("");
-                    // tvHelpPostHours.setVisibility(View.VISIBLE);
-                    // tvHelpPostDate.setVisibility(View.VISIBLE);
+                    case 3:
+                        linSelectHours.setVisibility(View.VISIBLE);
+                        tvHelpPostHours.setText(String.valueOf(Utils.dateFormat(System.currentTimeMillis(), Constants.HH_MM_SS_24)));
+                        break;
                 }
             }
 
@@ -166,6 +181,27 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
             }
         });
 
+        spAmount = (Spinner) rootView.findViewById(R.id.sp_amount);
+        spAmount.setAdapter(new SpinnerAdapter(homeActivity, R.layout.spinner_row_list, amountSelectionList));
+        spAmount.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 1:
+                        flagAmount = 0;
+                        break;
+
+                    case 2:
+                        flagAmount = 1;
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         btnNextStep = (Button) rootView.findViewById(R.id.btn_next_help);
         btnNextStep.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
 
@@ -196,13 +232,12 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
 
             case R.id.tv_helpPostHours:
                 Utils.buttonClickEffect(view);
-                CustomDialog.getInstance().showTimePickerDialog(homeActivity, tvHelpPostHours, /*spinner.getSelectedItemPosition()*/2);
+                CustomDialog.getInstance().showTimePickerDialog(homeActivity, tvHelpPostHours, spTime.getSelectedItemPosition());
                 break;
 
             case R.id.btn_next_help:
                 Utils.buttonClickEffect(view);
                 if (validateForm()) {
-
                     insertJobPost();
                 }
                 break;
@@ -277,29 +312,37 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
 
     private boolean validateForm() {
 
-        if (spinner.getSelectedItemPosition() == 0) {
+        if (spTime.getSelectedItemPosition() == 0) {
             ToastHelper.getInstance().showMessage(getString(R.string.select_time_limits));
             return false;
-        } else if (spinner.getSelectedItemPosition() == 1) {
+        } else if (spTime.getSelectedItemPosition() == 1) {
             if (tvHelpPostHours.getText().toString().trim().isEmpty()) {
                 ToastHelper.getInstance().showMessage(getString(R.string.select_hours_time_liimit));
                 return false;
+            } else if (spAmount.getSelectedItemPosition() == 0) {
+                ToastHelper.getInstance().showMessage(getString(R.string.str_select_amount));
+                return false;
             } else if (edtAmount.getText().toString().isEmpty()) {
                 ToastHelper.getInstance().showMessage(getString(R.string.enter_amount_time_limits));
+                edtAmount.requestFocus();
                 return false;
             } else {
                 return true;
             }
 
-        } else if (spinner.getSelectedItemPosition() == 2) {
+        } else if (spTime.getSelectedItemPosition() == 2) {
             if (tvHelpPostDate.getText().toString().isEmpty()) {
                 ToastHelper.getInstance().showMessage(getString(R.string.select_required_date_limit));
                 return false;
             } else if (tvHelpPostHours.getText().toString().trim().isEmpty()) {
                 ToastHelper.getInstance().showMessage(getString(R.string.select_hours_time_liimit));
                 return false;
+            } else if (spAmount.getSelectedItemPosition() == 0) {
+                ToastHelper.getInstance().showMessage(getString(R.string.str_select_amount));
+                return false;
             } else if (edtAmount.getText().toString().isEmpty()) {
                 ToastHelper.getInstance().showMessage(getString(R.string.enter_amount_time_limits));
+                edtAmount.requestFocus();
                 return false;
             } else {
                 return true;
@@ -326,7 +369,12 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
         params.put("ClientId", String.valueOf(loginUser.getClientId()));
         params.put("JobTitle", bundle.getString(Constants.TITLE));
         params.put("JobDescription", bundle.getString(Constants.DESCRIPTION));
-        params.put("JobPhoto", bundle.getString(Constants.BASE_64_IMAGE));
+        if (helpPicsList.size() > 0) {
+            params.put("JobPhoto", helpPicsList.get(0).getBase64image());
+        } else {
+            params.put("JobPhoto", "");
+        }
+
         params.put("CategoryId", String.valueOf(categoryModel.getCategoryId()));
         params.put("JobPostingPoints", String.valueOf(0));
         params.put("JobPostingAmount", String.valueOf(0));
@@ -338,12 +386,15 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
         params.put("Longitude_1", String.valueOf(0));
         params.put("Altitude_1", String.valueOf(0));
 
-        if (spinner.getSelectedItemPosition() == 1) {
+        if (spTime.getSelectedItemPosition() == 1) {
             params.put("JobHour", String.valueOf(0));
             params.put("JobDoneTime", String.valueOf(Utils.dateFormat(System.currentTimeMillis(), Constants.DATE_MM_DD_YYYY) + " " + tvHelpPostHours.getText().toString()));
-        } else if (spinner.getSelectedItemPosition() == 2) {
+        } else if (spTime.getSelectedItemPosition() == 2) {
             params.put("JobHour", String.valueOf(0));
             params.put("JobDoneTime", String.valueOf(tvHelpPostDate.getText().toString() + " " + tvHelpPostHours.getText().toString()));
+        } else if (spTime.getSelectedItemPosition() == 3) {
+            params.put("JobHour", String.valueOf(0));
+            params.put("JobDoneTime", String.valueOf(Utils.dateFormat(System.currentTimeMillis(), Constants.DATE_MM_DD_YYYY) + " " + tvHelpPostHours.getText().toString()));
         }
 
         params.put("JobAmount", postAmount);
@@ -351,6 +402,26 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
         params.put("PaymentId", "");
         params.put("PaymentStatus", "");
         params.put("PaymentResponse", "");
+
+        if (helpPicsList.size() >= 2) {
+            params.put("JobPhoto1", helpPicsList.get(1).getBase64image());
+
+        } else {
+            params.put("JobPhoto1", "");
+        }
+        if (helpPicsList.size() >= 3) {
+            params.put("JobPhoto2", helpPicsList.get(2).getBase64image());
+        } else {
+            params.put("JobPhoto2", "");
+        }
+
+        if (helpPicsList.size() >= 4) {
+            params.put("JobPhoto3", helpPicsList.get(3).getBase64image());
+        } else {
+            params.put("JobPhoto3", "");
+        }
+
+        params.put("JobAmountFlag", String.valueOf(flagAmount));
 
         RestClient.getInstance().post(homeActivity, Request.Method.POST, params,
                 ApiList.JOB_POST_INSERT, true, RequestCode.JobPostInsert, this);
@@ -377,30 +448,6 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
             }
         });
         builder.show();
-
-        /*final AlertDialog.Builder[] builder = new AlertDialog.Builder[1];
-        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        builder[0] = new AlertDialog.Builder(homeActivity, R.style.dialogStyle);
-        //  } else {
-        //      builder = new AlertDialog.Builder(profileActivity);
-        //  }
-        // builder.create();
-        builder[0].setTitle(getString(R.string.purchase_credit_points));
-        builder[0].setMessage(R.string.are_you_want_to_but_credit_points);
-        builder[0].setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                homeActivity.pushFragment(new PackagesFragment(), true, false, null);
-            }
-        });
-        builder[0].setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder[0].show();*/
     }
 
     private void showRewardedVideo() {

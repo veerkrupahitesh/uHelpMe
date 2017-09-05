@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -31,18 +35,19 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.activity.HomeActivity;
+import com.veeritsolutions.uhelpme.adapters.AdpPetPics;
 import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.enums.ImageUpload;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
+import com.veeritsolutions.uhelpme.models.HelpPicsModel;
 import com.veeritsolutions.uhelpme.utility.Constants;
 import com.veeritsolutions.uhelpme.utility.PermissionClass;
 import com.veeritsolutions.uhelpme.utility.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -55,14 +60,20 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
     private TextView tvUhelpMe, tvBasicInfo, tvAddHelpPhoto;
     private EditText edtTitle, edtDescription;
     private Button btnNextStep;
-    private ImageView imgBackHeader, imgHelpPhoto;
+    private ImageView imgBackHeader/*, imgHelpPhoto*/;
+    // private LinearLayout linImages;
+    private RecyclerView recyclerPetPics;
 
     private Bundle bundle;
     private HomeActivity homeActivity;
     private String title, description;
     private Dialog mDialog;
-    private List<String> permissionList;
-    private String image64Base = "";
+    // private List<String> permissionList;
+    //private String image64Base = "";
+    private ArrayList<HelpPicsModel> base64List;
+    private AdpPetPics adpPetPics;
+    private String image64Base;
+
 
     public static Bitmap decodeBase64(String input) {
         byte[] decodedBytes = Base64.decode(input, 0);
@@ -73,10 +84,11 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         homeActivity = (HomeActivity) getActivity();
-        permissionList = new ArrayList<>();
-        permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-        permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        permissionList.add(Manifest.permission.CAMERA);
+//        permissionList = new ArrayList<>();
+//        permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+//        permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//        permissionList.add(Manifest.permission.CAMERA);
+        base64List = new ArrayList<>();
     }
 
     @Nullable
@@ -95,6 +107,8 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
         homeActivity.tvChatRoom.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
 
         rootView = inflater.inflate(R.layout.fragment_post_help_basic_info, container, false);
+
+        //linImages = (LinearLayout) rootView.findViewById(R.id.lin_images);
 
         imgBackHeader = (ImageView) rootView.findViewById(R.id.img_back_header);
         imgBackHeader.setVisibility(View.GONE);
@@ -117,15 +131,16 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
         btnNextStep = (Button) rootView.findViewById(R.id.btn_next_help);
         btnNextStep.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
 
-        imgHelpPhoto = (ImageView) rootView.findViewById(R.id.img_helpPhoto);
-
+        //imgHelpPhoto = (ImageView) rootView.findViewById(R.id.img_helpPhoto);
+        recyclerPetPics = (RecyclerView) rootView.findViewById(R.id.recycler_PetPics);
+        recyclerPetPics.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        adpPetPics = new AdpPetPics(getActivity(), base64List);
+        recyclerPetPics.setAdapter(adpPetPics);
         try {
-            if (image64Base.length() > 0) {
-                imgHelpPhoto.setVisibility(View.VISIBLE);
-                imgHelpPhoto.setImageBitmap(decodeBase64(image64Base));
-            } else {
-                imgHelpPhoto.setVisibility(View.GONE);
+            if (base64List.size() > 0) {
+                recyclerPetPics.setVisibility(View.VISIBLE);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -173,45 +188,65 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
 
             case R.id.btn_next_help:
                 Utils.buttonClickEffect(view);
-                getHelpBasicData();
+                goToNextScreen();
                 break;
 
             case R.id.lin_takePic:
 
                 Utils.buttonClickEffect(view);
 
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    // ContextCompat.checkSelfPermission(getContext(), permissionList.get(0));
-                    String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-                    //if (shouldShowRequestPermissionRationale(permissions))
-                    requestPermissions(permissions, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA);
-
+                if (base64List.size() >= 4) {
+                    showSelectionDialog();
                 } else {
-                    // start cropping activity for pre-acquired image saved on the device
-                    CropImage.activity()
-                            .setGuidelines(CropImageView.Guidelines.ON)
-                            .setActivityTitle("Crop")
-                            .setRequestedSize(400, 400)
-                            .start(getContext(), this);
-                    // showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                        // ContextCompat.checkSelfPermission(getContext(), permissionList.get(0));
+                        String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+                        //if (shouldShowRequestPermissionRationale(permissions))
+                        requestPermissions(permissions, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA);
+
+                    } else {
+                        // start cropping activity for pre-acquired image saved on the device
+                        CropImage.activity()
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .setActivityTitle("Crop")
+                                .setRequestedSize(400, 400)
+                                .setAspectRatio(1, 1)
+                                .start(getContext(), this);
+                        // showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
+                    }
                 }
                 break;
 
         }
     }
 
-    private void getHelpBasicData() {
+    private void showSelectionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.str_upload_photos));
+        builder.setMessage(getString(R.string.str_maximun_photos));
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    private void goToNextScreen() {
 
         title = edtTitle.getText().toString().trim();
         description = edtDescription.getText().toString().trim();
         if (title.isEmpty()) {
             edtTitle.setError("Enter help title");
+            edtTitle.requestFocus();
             return;
         }
 
         if (description.isEmpty()) {
             edtDescription.setError("Enter help description");
+            edtDescription.requestFocus();
             return;
         }
 
@@ -219,8 +254,84 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
         bundle.putInt(Constants.IS_FROM_HOME_ACTIVITY, 0);
         bundle.putString(Constants.TITLE, title);
         bundle.putString(Constants.DESCRIPTION, description);
-        bundle.putString(Constants.BASE_64_IMAGE, image64Base);
+        bundle.putSerializable(Constants.BASE_64_IMAGE, base64List);
         homeActivity.pushFragment(new PostHelpCategoryFragment(), true, false, bundle);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == Activity.RESULT_OK) {
+
+            switch (requestCode) {
+
+                case Constants.REQUEST_CAMERA_PROFILE:
+
+                    Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+                    Uri selectedImageUri = Utils.getImageUri(getActivity(), thumbnail);
+                    beginCrop(selectedImageUri);
+                    break;
+
+                case Constants.REQUEST_FILE_PROFILE:
+
+                    selectedImageUri = data.getData();
+                    beginCrop(selectedImageUri);
+                    break;
+
+                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                    handleCrop(0, result.getUri().getPath());
+                    break;
+            }
+        }
+    }
+
+    private void beginCrop(Uri source) {
+
+        Uri destination = Uri.fromFile(new File(getActivity().getCacheDir(), "cropped"));
+       /* Crop.of(source, destination)
+                .withAspect(imgHelpPhoto.getWidth(), imgHelpPhoto.getHeight())
+                .start(getActivity(), this);*/
+    }
+
+    private void handleCrop(int resultCode, String data) {
+        image64Base = Utils.getStringImage(data, ImageUpload.ClientProfile);
+
+        HelpPicsModel helpPicsModel = new HelpPicsModel();
+        helpPicsModel.setPicPath(data);
+        helpPicsModel.setBase64image(image64Base);
+        base64List.add(helpPicsModel);
+        recyclerPetPics.setVisibility(View.VISIBLE);
+        adpPetPics.refreshList(base64List);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA) {
+
+            if (grantResults.length > 0 || grantResults.length != 0) {
+
+                if (PermissionClass.verifyPermission(grantResults)) {
+                    // start cropping activity for pre-acquired image saved on the device
+                    CropImage.activity()
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setActivityTitle("Crop")
+                            .setRequestedSize(400, 400)
+                            .setAspectRatio(1, 1)
+                            .start(getContext(), this);
+                    //showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
+                } else {
+                    permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+                    //if (shouldShowRequestPermissionRationale(permissions))
+                    requestPermissions(permissions, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA);
+                    //PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList);
+                }
+            }
+        }
     }
 
     public void showImageSelect(Context mContext, String mTitle, boolean mIsCancelable) {
@@ -304,78 +415,6 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (resultCode == Activity.RESULT_OK) {
-
-            switch (requestCode) {
-
-                case Constants.REQUEST_CAMERA_PROFILE:
-
-                    Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-                    Uri selectedImageUri = Utils.getImageUri(getActivity(), thumbnail);
-                    beginCrop(selectedImageUri);
-                    break;
-
-                case Constants.REQUEST_FILE_PROFILE:
-
-                    selectedImageUri = data.getData();
-                    beginCrop(selectedImageUri);
-                    break;
-
-                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
-                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                    handleCrop(0, result.getUri().getPath());
-                    break;
-            }
-        }
-    }
-
-    private void beginCrop(Uri source) {
-
-        Uri destination = Uri.fromFile(new File(getActivity().getCacheDir(), "cropped"));
-       /* Crop.of(source, destination)
-                .withAspect(imgHelpPhoto.getWidth(), imgHelpPhoto.getHeight())
-                .start(getActivity(), this);*/
-    }
-
-    private void handleCrop(int resultCode, String data) {
-
-        image64Base = Utils.getStringImage(data, ImageUpload.ClientProfile);
-        imgHelpPhoto.setVisibility(View.VISIBLE);
-        //imgHelpPhoto.setImageURI(null);
-        //imgHelpPhoto.setImageURI(data);
-        Utils.setImage(data, R.drawable.img_user_placeholder, imgHelpPhoto);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA) {
-
-            if (grantResults.length > 0 || grantResults.length != 0) {
-
-                if (PermissionClass.verifyPermission(grantResults)) {
-                    // start cropping activity for pre-acquired image saved on the device
-                    CropImage.activity()
-                            .setGuidelines(CropImageView.Guidelines.ON)
-                            .setActivityTitle("Crop")
-                            .setRequestedSize(400, 400)
-                            .start(getContext(), this);
-                    //showImageSelect(getActivity(), getString(R.string.str_select_profile_photo), true);
-                } else {
-                    permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-                    //if (shouldShowRequestPermissionRationale(permissions))
-                    requestPermissions(permissions, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA);
-                    //PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION_STORAGE_CAMERA, permissionList);
-                }
-            }
         }
     }
 }

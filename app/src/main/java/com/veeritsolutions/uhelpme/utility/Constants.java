@@ -86,4 +86,6 @@ public class Constants {
     public static String PACKAGE_DATA = "packages";
     public static String USER_DATA = "userData";
     public static String CHAT_GROUP_MEMBER_DATA = "chatGroupMemberData";
+    public static String HH_MM_SS_24 = "HH:mm:ss";
+    public static String HH_MM_SS_12 = "hh:mm:ss";
 }
