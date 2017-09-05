@@ -80,7 +80,7 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
     private DatabaseReference databaseReferenceGroup;
     private LoginUserModel loginUserModel;
     private RewardedVideoAd mRewardedVideoAd;
-    private int flagAmount;
+    private int flagAmount, flagTime;
     private ArrayList<HelpPicsModel> helpPicsList;
 
     @Override
@@ -159,6 +159,7 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
                         linSelectDate.setVisibility(View.GONE);
                         tvHelpPostHours.setText("");
                         tvHelpPostDate.setText("");
+                        flagTime = 0;
                         break;
 
                     case 2:
@@ -166,11 +167,13 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
                         linSelectDate.setVisibility(View.VISIBLE);
                         tvHelpPostHours.setText("");
                         tvHelpPostDate.setText("");
+                        flagTime = 1;
                         break;
 
                     case 3:
                         linSelectHours.setVisibility(View.VISIBLE);
                         tvHelpPostHours.setText(String.valueOf(Utils.dateFormat(System.currentTimeMillis(), Constants.HH_MM_SS_24)));
+                        flagTime = 2;
                         break;
                 }
             }
@@ -422,6 +425,7 @@ public class PostHelpFinalFragment extends Fragment implements OnClickEvent, OnB
         }
 
         params.put("JobAmountFlag", String.valueOf(flagAmount));
+        params.put("JobTimeFlag", String.valueOf(flagTime));
 
         RestClient.getInstance().post(homeActivity, Request.Method.POST, params,
                 ApiList.JOB_POST_INSERT, true, RequestCode.JobPostInsert, this);
