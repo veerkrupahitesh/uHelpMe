@@ -372,10 +372,10 @@ public class Utils {
         File image = new File(imagePath);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
-        if (imageUpload == ImageUpload.ClientProfile)
-            bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
-        else if (imageUpload == ImageUpload.ClientBanner)
-            bitmap = Bitmap.createScaledBitmap(bitmap, 400, 200, true);
+//        if (imageUpload == ImageUpload.ClientProfile)
+//            bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
+//        else if (imageUpload == ImageUpload.ClientBanner)
+//            bitmap = Bitmap.createScaledBitmap(bitmap, 400, 200, true);
         // Bitmap bm = BitmapFactory.decodeFile(imagePath);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object

@@ -35,7 +35,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.activity.HomeActivity;
-import com.veeritsolutions.uhelpme.adapters.AdpPetPics;
+import com.veeritsolutions.uhelpme.adapters.AdpHelpPics;
 import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.enums.ImageUpload;
@@ -71,7 +71,7 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
     // private List<String> permissionList;
     //private String image64Base = "";
     private ArrayList<HelpPicsModel> base64List;
-    private AdpPetPics adpPetPics;
+    private AdpHelpPics adpHelpPics;
     private String image64Base;
 
 
@@ -134,8 +134,8 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
         //imgHelpPhoto = (ImageView) rootView.findViewById(R.id.img_helpPhoto);
         recyclerPetPics = (RecyclerView) rootView.findViewById(R.id.recycler_PetPics);
         recyclerPetPics.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        adpPetPics = new AdpPetPics(getActivity(), base64List);
-        recyclerPetPics.setAdapter(adpPetPics);
+        adpHelpPics = new AdpHelpPics(getActivity(), base64List);
+        recyclerPetPics.setAdapter(adpHelpPics);
         try {
             if (base64List.size() > 0) {
                 recyclerPetPics.setVisibility(View.VISIBLE);
@@ -162,6 +162,7 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Utils.setupOutSideTouchHideKeyboard(rootView);
     }
 
     @Override
@@ -303,7 +304,7 @@ public class PostHelpBasicInfoFragment extends Fragment implements DataObserver,
         helpPicsModel.setBase64image(image64Base);
         base64List.add(helpPicsModel);
         recyclerPetPics.setVisibility(View.VISIBLE);
-        adpPetPics.refreshList(base64List);
+        adpHelpPics.refreshList(base64List);
     }
 
     @Override

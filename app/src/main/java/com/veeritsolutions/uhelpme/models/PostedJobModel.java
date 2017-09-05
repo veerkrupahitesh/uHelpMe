@@ -144,8 +144,16 @@ public class PostedJobModel implements Serializable {
     private int JobTimeFlag = 0;
     @SerializedName("JobAmountFlag")
     @Expose
-    private int JobAmountFlag = 0;
-
+    private int JobAmountFlag = 1;
+    @SerializedName("JobPhoto1")
+    @Expose
+    private String JobPhoto1 = "";
+    @SerializedName("JobPhoto2")
+    @Expose
+    private String JobPhoto2 = "";
+    @SerializedName("JobPhoto3")
+    @Expose
+    private String JobPhoto3 = "";
 
     public int getPosition() {
         return position;
@@ -506,5 +514,29 @@ public class PostedJobModel implements Serializable {
 
     public void setJobAmountFlag(int jobAmountFlag) {
         JobAmountFlag = jobAmountFlag;
+    }
+
+    public String getJobPhoto1() {
+        return JobPhoto1;
+    }
+
+    public void setJobPhoto1(String jobPhoto1) {
+        JobPhoto1 = jobPhoto1;
+    }
+
+    public String getJobPhoto2() {
+        return JobPhoto2;
+    }
+
+    public void setJobPhoto2(String jobPhoto2) {
+        JobPhoto2 = jobPhoto2;
+    }
+
+    public String getJobPhoto3() {
+        return JobPhoto3;
+    }
+
+    public void setJobPhoto3(String jobPhoto3) {
+        JobPhoto3 = jobPhoto3;
     }
 }

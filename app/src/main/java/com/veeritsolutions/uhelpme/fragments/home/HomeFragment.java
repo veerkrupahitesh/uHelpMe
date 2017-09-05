@@ -9,7 +9,6 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -30,7 +29,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Request;
-import com.google.android.gms.maps.GoogleMap;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.activity.HomeActivity;
@@ -69,8 +67,8 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
         SwipeRefreshLayout.OnRefreshListener {
 
     private static final int REQUEST_PERMISIONS = 112;
-    private final int SPLASH_DISPLAY_LENGTH = 2000;
-    GoogleMap mGoogleMap;
+    //private final int SPLASH_DISPLAY_LENGTH = 2000;
+    //GoogleMap mGoogleMap;
     //xml components
     private RecyclerView recyclerViewHelp, recyclerViewCategory;
     private View rootView;
@@ -82,7 +80,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     private FloatingActionButton fabSearch, fabCateSearch, fabKeyWordSearch;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView tvMapSearch, tvARviewSearch, tvCategorySearch, tvKeyWordSearch;
-    private AppBarLayout appBarLayout;
+    //private AppBarLayout appBarLayout;
     private View itemView;
     //object and variable declaration
     private ArrayList<PostedJobModel> postedJobList;
@@ -98,7 +96,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     private AdpCategory adpCategory;
     private ArrayList<CategoryModel> categoryModelsList;
     private CategoryModel categoryModel;
-    private StringBuilder stringBuilder;
+    // private StringBuilder stringBuilder;
     private LinearLayoutManager mLayoutManager;
     private int totalItemsCount;
     private SensorManager sensorMgr;
@@ -164,7 +162,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        appBarLayout = (AppBarLayout) rootView.findViewById(R.id.appBarLayout);
+        //appBarLayout = (AppBarLayout) rootView.findViewById(R.id.appBarLayout);
 
         tvMapSearch = (TextView) rootView.findViewById(R.id.tv_mapSearch);
         tvMapSearch.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
@@ -245,13 +243,13 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
                 }
             }
         });
-        setListner();
+        setListener();
         //adpHelpNeeded = new AdpHelpNeeded(postedJobList, homeActivity);
         return rootView;
     }
 
 
-    private void setListner() {
+    private void setListener() {
         mLayoutManager = new LinearLayoutManager(homeActivity);
         recyclerViewHelp.setLayoutManager(mLayoutManager);
         recyclerViewHelp.addOnScrollListener(new EndlessRecyclerViewScrollListener(mLayoutManager, 1) {
@@ -283,8 +281,9 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     }
 
     private void hideViews() {
+        homeActivity.linFooterView.setVisibility(View.GONE);
         // Utils.slideDown(homeActivity.linFooterView, getActivity());
-        slideToBottom(homeActivity.linFooterView);
+        //slideToBottom(homeActivity.linFooterView);
         //slideToBottom(appBarLayout);
         fabSearch.setVisibility(View.GONE);
         linSearchView.setVisibility(View.GONE);
@@ -292,8 +291,9 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     }
 
     private void showViews() {
+        homeActivity.linFooterView.setVisibility(View.VISIBLE);
         //Utils.slideUP(homeActivity.linFooterView, getActivity());
-        slideToTop(homeActivity.linFooterView);
+        //slideToTop(homeActivity.linFooterView);
         //slideToTop(appBarLayout);
         fabSearch.setVisibility(View.VISIBLE);
         if (isSearchClosed) {
@@ -325,7 +325,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        stringBuilder = new StringBuilder();
+        //stringBuilder = new StringBuilder();
         postedJobList = new ArrayList<>();
         getPostedJobData(categoryId, keywordSearch, 1, false);
         setClientToken();
@@ -372,7 +372,16 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
                 o = view.getTag(R.id.img_offer);
                 if (o != null) {
                     postedJobModel = (PostedJobModel) o;
-                    CustomDialog.getInstance().showImageDialog(postedJobModel.getJobPhoto(), getActivity());
+                    ArrayList<String> list = new ArrayList<>();
+                    list.add(postedJobModel.getJobPhoto());
+                    if (!postedJobModel.getJobPhoto1().isEmpty())
+                        list.add(postedJobModel.getJobPhoto1());
+                    if (!postedJobModel.getJobPhoto2().isEmpty())
+                        list.add(postedJobModel.getJobPhoto1());
+                    if (!postedJobModel.getJobPhoto3().isEmpty())
+                        list.add(postedJobModel.getJobPhoto1());
+
+                    CustomDialog.getInstance().showImageDialog(list, getActivity());
                    /* LoginUserModel loginUserModel = new LoginUserModel();
                     loginUserModel.setClientId(postedJobModel.getClientId());
                     Bundle bundle = new Bundle();
@@ -651,7 +660,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
             isSearchClosed = true;
             isCateClosed = true;
             isKeywordClosed = true;
-            stringBuilder = new StringBuilder();
+            //stringBuilder = new StringBuilder();
 
             /*categoryId = "";
             keywordSearch = "";*/
@@ -728,7 +737,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
         categoryId = "";
         keywordSearch = "";
         getPostedJobData(categoryId, keywordSearch, 1, false);
-        setListner();
+        setListener();
     }
 
     private void setClientToken() {

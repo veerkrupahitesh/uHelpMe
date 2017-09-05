@@ -297,7 +297,15 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
             case R.id.img_help_ProfilePic:
                 Utils.buttonClickEffect(view);
                 if (postedJobModel != null) {
-                    CustomDialog.getInstance().showImageDialog(postedJobModel.getJobPhoto(), getActivity());
+                    ArrayList<String> list = new ArrayList<>();
+                    if (!postedJobModel.getJobPhoto1().isEmpty())
+                        list.add(postedJobModel.getJobPhoto1());
+                    if (!postedJobModel.getJobPhoto2().isEmpty())
+                        list.add(postedJobModel.getJobPhoto1());
+                    if (!postedJobModel.getJobPhoto3().isEmpty())
+                        list.add(postedJobModel.getJobPhoto1());
+
+                    CustomDialog.getInstance().showImageDialog(list, getActivity());
                 }
                 break;
 
@@ -356,7 +364,7 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
         mGoogleMap.setTrafficEnabled(true);
         mGoogleMap.setIndoorEnabled(true);
         mGoogleMap.setBuildingsEnabled(true);
-        mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+        // mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
         List<String> permission = new ArrayList<>();
         permission.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -370,7 +378,7 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
             }
         });
         if (PermissionClass.checkPermission(getActivity(), PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION, permission)) {
-            mGoogleMap.setMyLocationEnabled(true);
+            // mGoogleMap.setMyLocationEnabled(true);
         }
     }
 
@@ -383,8 +391,9 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
         if (requestCode == PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION) {
 
             if (grantResults.length > 0 || grantResults.length != PackageManager.PERMISSION_GRANTED) {
-                if (PermissionClass.verifyPermission(grantResults))
-                    mGoogleMap.setMyLocationEnabled(true);
+                if (PermissionClass.verifyPermission(grantResults)) {
+                    // mGoogleMap.setMyLocationEnabled(true);
+                }
             }
         }
     }

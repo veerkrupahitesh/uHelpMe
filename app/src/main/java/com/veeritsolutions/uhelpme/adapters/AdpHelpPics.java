@@ -21,13 +21,13 @@ import java.util.List;
  * Created by ${Hitesh} on 4/8/2017.
  */
 
-public class AdpPetPics extends RecyclerView.Adapter<AdpPetPics.MyViewHolder> {
+public class AdpHelpPics extends RecyclerView.Adapter<AdpHelpPics.MyViewHolder> {
 
     private Activity context;
     private List<HelpPicsModel> helpPicsList;
 
 
-    public AdpPetPics(Activity context, List<HelpPicsModel> helpPicsList) {
+    public AdpHelpPics(Activity context, List<HelpPicsModel> helpPicsList) {
         this.context = context;
         this.helpPicsList = helpPicsList;
     }

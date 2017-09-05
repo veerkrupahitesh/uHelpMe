@@ -36,6 +36,7 @@ import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.listener.OnBackPressedEvent;
 import com.veeritsolutions.uhelpme.listener.OnClickEvent;
 import com.veeritsolutions.uhelpme.models.CategoryModel;
+import com.veeritsolutions.uhelpme.models.HelpPicsModel;
 import com.veeritsolutions.uhelpme.models.LoginUserModel;
 import com.veeritsolutions.uhelpme.models.PostedJobModel;
 import com.veeritsolutions.uhelpme.utility.Constants;
@@ -59,28 +60,31 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
     private EditText edtTitle, edtDescription, edtAmount;
     private RecyclerView recyclerViewCategory;
     private TextView tvUhelpMe, tvHelpPostDate, tvHelpPostHours;
-    private Spinner spinner;
+    private Spinner spTime, spAmount;
     private LinearLayout linSelectDate, linSelectHours;
     AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-            if (position == 1) {
+            switch (position) {
+                case 1:
+                    linSelectHours.setVisibility(View.VISIBLE);
+                    linSelectDate.setVisibility(View.GONE);
+                    flagTime = 0;
+                    break;
 
-                //tvHelpPostHours.setVisibility(View.VISIBLE);
-                linSelectHours.setVisibility(View.VISIBLE);
-                linSelectDate.setVisibility(View.GONE);
-                tvHelpPostHours.setText("");
-                tvHelpPostDate.setText("");
-                //CustomDialog.getInstance().showTimePickerDialog(homeActivity, tvHelpPostHours);
+                case 2:
+                    linSelectHours.setVisibility(View.VISIBLE);
+                    linSelectDate.setVisibility(View.VISIBLE);
+                    flagTime = 1;
+                    break;
 
-            } else if (position == 2) {
-                linSelectHours.setVisibility(View.VISIBLE);
-                linSelectDate.setVisibility(View.VISIBLE);
-                tvHelpPostHours.setText("");
-                tvHelpPostDate.setText("");
-                // tvHelpPostHours.setVisibility(View.VISIBLE);
-                // tvHelpPostDate.setVisibility(View.VISIBLE);
+                case 3:
+                    linSelectHours.setVisibility(View.VISIBLE);
+                    linSelectDate.setVisibility(View.GONE);
+                    tvHelpPostHours.setText(String.valueOf(Utils.dateFormat(System.currentTimeMillis(), Constants.HH_MM_SS_24)));
+                    flagTime = 2;
+                    break;
             }
         }
 
@@ -98,7 +102,10 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
     private CategoryModel categoryModel;
     private List<String> dateSelectionList;
     private LoginUserModel loginUserModel;
-    private String title = "", description = "", base64Image;
+    private String title = "", description = "", base64Image = "", base64Image1 = "", base64Image2 = "", base64Image3 = "";
+    private int flagAmount, flagTime;
+    private ArrayList<HelpPicsModel> helpPicsList;
+    private List<String> amountSelectionList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,6 +117,13 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
         dateSelectionList.add(getString(R.string.select_time_limits));
         dateSelectionList.add(getString(R.string.today));
         dateSelectionList.add(getString(R.string.other_day));
+        dateSelectionList.add(getString(R.string.str_now));
+
+        amountSelectionList = new ArrayList<>();
+        amountSelectionList.add(getString(R.string.str_select_amount));
+        amountSelectionList.add(getString(R.string.str_fixed_rate));
+        amountSelectionList.add(getString(R.string.str_houly_rate));
+
     }
 
     @Nullable
@@ -142,8 +156,30 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
         linSelectDate = (LinearLayout) rootView.findViewById(R.id.lin_selectDate);
         linSelectHours = (LinearLayout) rootView.findViewById(R.id.lin_selectHours);
 
-        spinner = (Spinner) rootView.findViewById(R.id.sp_timeLimits);
-        spinner.setAdapter(new SpinnerAdapter(homeActivity, R.layout.spinner_row_list, dateSelectionList));
+        spTime = (Spinner) rootView.findViewById(R.id.sp_timeLimits);
+        spTime.setAdapter(new SpinnerAdapter(homeActivity, R.layout.spinner_row_list, dateSelectionList));
+
+        spAmount = (Spinner) rootView.findViewById(R.id.sp_amount);
+        spAmount.setAdapter(new SpinnerAdapter(homeActivity, R.layout.spinner_row_list, amountSelectionList));
+        spAmount.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 1:
+                        flagAmount = 0;
+                        break;
+
+                    case 2:
+                        flagAmount = 1;
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         return rootView;
     }
@@ -158,21 +194,41 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
         edtDescription.setText(postedJobModel.getJobDescription());
         edtAmount.setText(String.valueOf(postedJobModel.getJobAmount()));
 
-        if (postedJobModel.getJobHour() > 0) {
-            spinner.setSelection(1);
-            tvHelpPostHours.setText(String.valueOf(postedJobModel.getJobHour()));
-            tvHelpPostDate.setText("");
-        } else {
-            spinner.setSelection(2);
-            String str = postedJobModel.getJobDoneTime();
+        String str = postedJobModel.getJobDoneTime();
 
-            String dateString = str.substring(0, 10);
-            String timeString = str.substring(11, postedJobModel.getJobDoneTime().length());
+        String dateString = str.substring(0, 10);
+        String timeString = str.substring(11, postedJobModel.getJobDoneTime().length());
 
-            tvHelpPostDate.setText(dateString);
-            tvHelpPostHours.setText(String.valueOf(timeString));
+        switch (postedJobModel.getJobTimeFlag()) {
+
+            case 0:
+                spTime.setSelection(1);
+                tvHelpPostHours.setText(String.valueOf(timeString));
+                break;
+
+            case 1:
+                spTime.setSelection(2);
+                tvHelpPostDate.setText(dateString);
+                tvHelpPostHours.setText(String.valueOf(timeString));
+                break;
+
+            case 2:
+                spTime.setSelection(3);
+                tvHelpPostHours.setText(String.valueOf(timeString));
+                break;
         }
 
+        switch (postedJobModel.getJobAmountFlag()) {
+
+            case 0:
+                spAmount.setSelection(1);
+                break;
+
+            case 1:
+                spAmount.setSelection(2);
+                break;
+        }
+        spTime.setOnItemSelectedListener(listener);
         Utils.setImage(postedJobModel.getJobPhoto(), R.drawable.img_user_placeholder, imgHelpPhoto);
     }
 
@@ -204,7 +260,6 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
                     }
                 }
                 new ImageTask().execute();
-                spinner.setOnItemSelectedListener(listener);
                 break;
 
             case JobPostUpdate:
@@ -261,13 +316,13 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
                 Utils.buttonClickEffect(view);
                 CustomDialog.getInstance().showDatePickerDialog(homeActivity, tvHelpPostDate,
                         CalenderDateSelection.CALENDER_WITH_FUTURE_DATE, 2050, 12, 30);
-                spinner.setOnItemSelectedListener(listener);
+                spTime.setOnItemSelectedListener(listener);
                 break;
 
             case R.id.tv_helpPostHours:
                 Utils.buttonClickEffect(view);
-                CustomDialog.getInstance().showTimePickerDialog(homeActivity, tvHelpPostHours, spinner.getSelectedItemPosition());
-                spinner.setOnItemSelectedListener(listener);
+                CustomDialog.getInstance().showTimePickerDialog(homeActivity, tvHelpPostHours, spTime.getSelectedItemPosition());
+                spTime.setOnItemSelectedListener(listener);
                 break;
 
             case R.id.btn_update:
@@ -306,12 +361,15 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
         params.put("Longitude_1", String.valueOf(0));
         params.put("Altitude_1", String.valueOf(0));
 
-        if (spinner.getSelectedItemPosition() == 1) {
+        if (spTime.getSelectedItemPosition() == 1) {
             params.put("JobHour", tvHelpPostHours.getText().toString());
             params.put("JobDoneTime", "");
-        } else if (spinner.getSelectedItemPosition() == 2) {
+        } else if (spTime.getSelectedItemPosition() == 2) {
             params.put("JobHour", String.valueOf(0));
             params.put("JobDoneTime", String.valueOf(tvHelpPostDate.getText().toString() + " " + tvHelpPostHours.getText().toString()));
+        } else if (spTime.getSelectedItemPosition() == 3) {
+            params.put("JobHour", String.valueOf(0));
+            params.put("JobDoneTime", String.valueOf(Utils.dateFormat(System.currentTimeMillis(), Constants.DATE_MM_DD_YYYY) + " " + tvHelpPostHours.getText().toString()));
         }
 
         params.put("JobAmount", postAmount);
@@ -319,6 +377,13 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
         params.put("PaymentId", postedJobModel.getPaymentId());
         params.put("PaymentStatus", postedJobModel.getPaymentStatus());
         params.put("PaymentResponse", postedJobModel.getPaymentResponse());
+
+        params.put("JobPhoto1", base64Image1);
+        params.put("JobPhoto2", base64Image2);
+        params.put("JobPhoto3", base64Image3);
+
+        params.put("JobAmountFlag", String.valueOf(flagAmount));
+        params.put("JobTimeFlag", String.valueOf(flagTime));
 
         RestClient.getInstance().post(homeActivity, Request.Method.POST, params,
                 ApiList.JOB_POST_UPDATE, true, RequestCode.JobPostUpdate, this);
@@ -353,10 +418,10 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
             return false;
         }
 
-        if (spinner.getSelectedItemPosition() == 0) {
+        if (spTime.getSelectedItemPosition() == 0) {
             ToastHelper.getInstance().showMessage(getString(R.string.select_time_limits));
             return false;
-        } else if (spinner.getSelectedItemPosition() == 1) {
+        } else if (spTime.getSelectedItemPosition() == 1) {
             if (tvHelpPostHours.getText().toString().trim().isEmpty()) {
                 ToastHelper.getInstance().showMessage(getString(R.string.select_hours_time_liimit));
                 return false;
@@ -367,7 +432,7 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
                 return true;
             }
 
-        } else if (spinner.getSelectedItemPosition() == 2) {
+        } else if (spTime.getSelectedItemPosition() == 2) {
             if (tvHelpPostDate.getText().toString().isEmpty()) {
                 ToastHelper.getInstance().showMessage(getString(R.string.select_required_date_limit));
                 return false;
@@ -399,8 +464,11 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
         @Override
         protected Void doInBackground(Void... params) {
             URL imgValue;
-            Debug.trace("taking", "2");
+
             try {
+                /**
+                 * first image download
+                 */
                 imgValue = new URL(postedJobModel.getJobPhoto());
                 //img_value = new URL("http://graph.facebook.com/"+ userProfileID +"/picture?type=square");
                 BitmapFactory.Options options = new BitmapFactory.Options();
@@ -414,7 +482,68 @@ public class ModifyMyHelpFragment extends Fragment implements OnClickEvent, OnBa
                 byte[] ba = bao.toByteArray();
                 base64Image = Base64.encodeToString(ba, Base64.DEFAULT);
 
-                Debug.trace("Encoded image is : ===== " + base64Image);
+                Debug.trace("Encoded image 1 : ===== " + base64Image);
+
+                /**
+                 * second image download
+                 * */
+                if (!postedJobModel.getJobPhoto1().isEmpty()) {
+                    imgValue = new URL(postedJobModel.getJobPhoto());
+                    //img_value = new URL("http://graph.facebook.com/"+ userProfileID +"/picture?type=square");
+                    options = new BitmapFactory.Options();
+                    mIcon1 = BitmapFactory.decodeStream(imgValue.openConnection().getInputStream(), null, options);
+                    Debug.trace("taking", "3" + imgValue);
+                    Debug.trace("taking", "3" + mIcon1);
+                    Debug.trace("taking", String.valueOf(mIcon1));
+
+                    bao = new ByteArrayOutputStream();
+                    mIcon1.compress(Bitmap.CompressFormat.PNG, 100, bao);
+                    ba = bao.toByteArray();
+                    base64Image1 = Base64.encodeToString(ba, Base64.DEFAULT);
+
+                    Debug.trace("Encoded image 2 : ===== " + base64Image1);
+                }
+
+                 /*
+                * third image download
+                * */
+                if (!postedJobModel.getJobPhoto2().isEmpty()) {
+                    imgValue = new URL(postedJobModel.getJobPhoto());
+                    //img_value = new URL("http://graph.facebook.com/"+ userProfileID +"/picture?type=square");
+                    options = new BitmapFactory.Options();
+                    mIcon1 = BitmapFactory.decodeStream(imgValue.openConnection().getInputStream(), null, options);
+                    Debug.trace("taking", "3" + imgValue);
+                    Debug.trace("taking", "3" + mIcon1);
+                    Debug.trace("taking", String.valueOf(mIcon1));
+
+                    bao = new ByteArrayOutputStream();
+                    mIcon1.compress(Bitmap.CompressFormat.PNG, 100, bao);
+                    ba = bao.toByteArray();
+                    base64Image2 = Base64.encodeToString(ba, Base64.DEFAULT);
+
+                    Debug.trace("Encoded image 3 : ===== " + base64Image2);
+                }
+
+
+                /*
+                * forth image download
+                * */
+                if (!postedJobModel.getJobPhoto3().isEmpty()) {
+                    imgValue = new URL(postedJobModel.getJobPhoto());
+                    //img_value = new URL("http://graph.facebook.com/"+ userProfileID +"/picture?type=square");
+                    options = new BitmapFactory.Options();
+                    mIcon1 = BitmapFactory.decodeStream(imgValue.openConnection().getInputStream(), null, options);
+                    Debug.trace("taking", "3" + imgValue);
+                    Debug.trace("taking", "3" + mIcon1);
+                    Debug.trace("taking", String.valueOf(mIcon1));
+
+                    bao = new ByteArrayOutputStream();
+                    mIcon1.compress(Bitmap.CompressFormat.PNG, 100, bao);
+                    ba = bao.toByteArray();
+                    base64Image3 = Base64.encodeToString(ba, Base64.DEFAULT);
+
+                    Debug.trace("Encoded image 4 : ===== " + base64Image3);
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();

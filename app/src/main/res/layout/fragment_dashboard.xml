@@ -27,11 +27,19 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TabWidget
-                        android:id="@android:id/tabs"
-                        style="@style/MyCustomTextAppearance"
+                    <HorizontalScrollView
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:fillViewport="true"
+                        android:scrollbars="none">
+
+                        <TabWidget
+                            android:id="@android:id/tabs"
+                            style="@style/MyCustomTextAppearance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:tabStripEnabled="false" />
+                    </HorizontalScrollView>
 
                     <FrameLayout
                         android:id="@android:id/tabcontent"

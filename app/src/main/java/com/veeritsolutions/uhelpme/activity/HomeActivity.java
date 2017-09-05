@@ -17,15 +17,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.google.android.gms.common.ConnectionResult;
@@ -45,8 +41,6 @@ import com.veeritsolutions.uhelpme.api.DataObserver;
 import com.veeritsolutions.uhelpme.api.RequestCode;
 import com.veeritsolutions.uhelpme.api.RestClient;
 import com.veeritsolutions.uhelpme.fragments.home.ChatDashboardFragment;
-import com.veeritsolutions.uhelpme.fragments.home.ChatRoomFragment;
-import com.veeritsolutions.uhelpme.fragments.home.DashboardChatUserFragment;
 import com.veeritsolutions.uhelpme.fragments.home.DashboardFragment;
 import com.veeritsolutions.uhelpme.fragments.home.HomeFragment;
 import com.veeritsolutions.uhelpme.fragments.home.PostHelpBasicInfoFragment;
@@ -65,7 +59,6 @@ import com.veeritsolutions.uhelpme.utility.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 
@@ -73,18 +66,10 @@ import java.util.Map;
  * Created by Admin on 5/11/2017.
  */
 
-public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnBackPressedEvent
+public class HomeActivity extends AppCompatActivity implements OnBackPressedEvent
         , ResultCallback<LocationSettingsResult>,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, View.OnClickListener, DataObserver {
-
-    OnClickEvent onClickEvent;
-    OnBackPressedEvent onBackPressedEvent;
-
-    FragmentManager fragmentManager;
-    FragmentTransaction fragmentTransaction;
-    Fragment currentFragment;
-    private Bundle bundle;
+        LocationListener, DataObserver {
 
     //private NavigationView navigationView;
     // private TextView navHeaderName, navHeaderLocation, navRating, navPoint, navHelpme, navOffered, navRatingText, navPointText, navHelpmeText, navOfferedText;
@@ -97,16 +82,21 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
     public ImageView imgDashbord;
     public ImageView imgChatRoom;
     public TextView tvHome, tvSearch, tvDashBoard, tvChatRoom;
-
     // location related
     protected LocationSettingsRequest mLocationSettingsRequest;
+    OnClickEvent onClickEvent;
+    OnBackPressedEvent onBackPressedEvent;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    Fragment currentFragment;
+    boolean doubleBackToExitPressedOnce = false;
+    private Bundle bundle;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private Location mLastLocation;
     private ArrayList<String> permission;
     private float lat, lon, altitude;
     private LoginUserModel loginUserModel;
-    boolean doubleBackToExitPressedOnce = false;
     private boolean isHome = true, isSearch = true, isDashBord = true, isChatRoom = true;
     private String lang = "en";
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -231,13 +221,13 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
     private void init() {
 
         linHome = (LinearLayout) findViewById(R.id.lin_home);
-        linHome.setOnClickListener(this);
+        //linHome.setOnClickListener(this);
         linSearch = (LinearLayout) findViewById(R.id.lin_fab_search);
-        linSearch.setOnClickListener(this);
+        // linSearch.setOnClickListener(this);
         linDashBoard = (LinearLayout) findViewById(R.id.lin_dashboard);
-        linDashBoard.setOnClickListener(this);
+        // linDashBoard.setOnClickListener(this);
         linChatRoom = (LinearLayout) findViewById(R.id.lin_chatroom);
-        linChatRoom.setOnClickListener(this);
+        // linChatRoom.setOnClickListener(this);
         linFooterView = (LinearLayout) findViewById(R.id.lin_homeFooter);
 
         imgHome = (ImageView) findViewById(R.id.img_home);
@@ -254,7 +244,6 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
 
     @Override
     public void onClick(View view) {
-
         onClickEvent.onClick(view);
         switch (view.getId()) {
 
@@ -268,26 +257,7 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
                     pushFragment(new PostHelpBasicInfoFragment(), true, false, bundle);
                 }
 
-//                imgHome.setImageResource(R.drawable.img_home_inactive);
-//                imgSearch.setImageResource(R.drawable.img_search_tabbar_inactive);
-//                imgDashbord.setImageResource(R.drawable.img_dashboard_inactive);
-//                imgChatRoom.setImageResource(R.drawable.img_chat_room_inactive);
-//                imgHelpMe.setImageResource(R.drawable.img_helpme_gray);
-//
-//                tvHome.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvSearch.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvDashBoard.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvChatRoom.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
                 break;
-
-           /* case R.id.img_back_header:
-                Utils.buttonClickEffect(dataView);
-                if (drawer != null) {
-                    if (!drawer.isDrawerOpen(GravityCompat.START)) {
-                        drawer.openDrawer(GravityCompat.START);
-                    }
-                }
-                break;*/
 
             case R.id.lin_home:
                 Utils.buttonClickEffect(view);
@@ -295,17 +265,6 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
                     removeAllFragment();
                     pushFragment(new HomeFragment(), true, false, null);
                 }
-
-//                imgHome.setImageResource(R.drawable.img_home_active);
-//                imgSearch.setImageResource(R.drawable.img_search_tabbar_inactive);
-//                imgDashbord.setImageResource(R.drawable.img_dashboard_inactive);
-//                imgChatRoom.setImageResource(R.drawable.img_chat_room_inactive);
-//                imgHelpMe.setImageResource(R.drawable.img_helpme);
-//
-//                tvHome.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
-//                tvSearch.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvDashBoard.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvChatRoom.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
                 break;
 
             case R.id.lin_fab_search:
@@ -315,17 +274,6 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
                     removeAllFragment();
                     pushFragment(new SearchFragment(), true, false, null);
                 }
-
-//                imgHome.setImageResource(R.drawable.img_home_inactive);
-//                imgSearch.setImageResource(R.drawable.img_search_tabbar_active);
-//                imgDashbord.setImageResource(R.drawable.img_dashboard_inactive);
-//                imgChatRoom.setImageResource(R.drawable.img_chat_room_inactive);
-//                imgHelpMe.setImageResource(R.drawable.img_helpme);
-//
-//                tvHome.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvSearch.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
-//                tvDashBoard.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvChatRoom.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
                 break;
 
             case R.id.lin_dashboard:
@@ -335,16 +283,6 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
                     removeAllFragment();
                     pushFragment(new DashboardFragment(), true, false, null);
                 }
-//                imgHome.setImageResource(R.drawable.img_home_inactive);
-//                imgSearch.setImageResource(R.drawable.img_search_tabbar_inactive);
-//                imgDashbord.setImageResource(R.drawable.img_dashboard_active);
-//                imgChatRoom.setImageResource(R.drawable.img_chat_room_inactive);
-//                imgHelpMe.setImageResource(R.drawable.img_helpme);
-//
-//                tvHome.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvSearch.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvDashBoard.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
-//                tvChatRoom.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
                 break;
 
             case R.id.lin_chatroom:
@@ -354,16 +292,6 @@ public class HomeActivity extends AppCompatActivity implements OnClickEvent, OnB
                     removeAllFragment();
                     pushFragment(new ChatDashboardFragment(), true, false, null);
                 }
-//                imgHome.setImageResource(R.drawable.img_home_inactive);
-//                imgSearch.setImageResource(R.drawable.img_search_tabbar_inactive);
-//                imgDashbord.setImageResource(R.drawable.img_dashboard_inactive);
-//                imgChatRoom.setImageResource(R.drawable.img_chat_room_active);
-//                imgHelpMe.setImageResource(R.drawable.img_helpme);
-//
-//                tvHome.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvSearch.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvDashBoard.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//                tvChatRoom.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
                 break;
 
         }

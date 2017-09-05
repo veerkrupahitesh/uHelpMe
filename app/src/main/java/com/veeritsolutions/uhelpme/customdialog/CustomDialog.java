@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -17,14 +18,9 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
 import com.veeritsolutions.uhelpme.adapters.AdpAllHelpOffers;
+import com.veeritsolutions.uhelpme.adapters.AdpViewPager;
 import com.veeritsolutions.uhelpme.enums.CalenderDateSelection;
 import com.veeritsolutions.uhelpme.helper.ToastHelper;
 import com.veeritsolutions.uhelpme.models.AllHelpOfferModel;
@@ -247,7 +244,7 @@ public class CustomDialog {
         }
     }
 
-    public void showImageDialog(String imageUrl, final Context context) {
+    public void showImageDialog(final ArrayList<String> imageUrl, final Context context) {
         if (imageUrl != null) {
             mDialog = new Dialog(context, R.style.dialogStyle);
                     /* Set Dialog width match parent */
@@ -256,7 +253,28 @@ public class CustomDialog {
             mDialog.setContentView(R.layout.custom_dialog_imageview);
             mDialog.setCancelable(true);
 
-            ImageView imgHelpPhoto = (ImageView) mDialog.findViewById(R.id.img_help_ProfilePic);
+            ViewPager viewPager = (ViewPager) mDialog.findViewById(R.id.viewPager);
+            viewPager.setAdapter(new AdpViewPager(imageUrl));
+            final TextView tvImageList = (TextView) mDialog.findViewById(R.id.tv_imageList);
+            tvImageList.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
+            tvImageList.setText(1 + "/" + imageUrl.size());
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    //tvImageList.setText(position + 1 + "/" + imageUrl.size());
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    tvImageList.setText(position + 1 + "/" + imageUrl.size());
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+            /*ImageView imgHelpPhoto = (ImageView) mDialog.findViewById(R.id.img_help_ProfilePic);
             final ProgressBar progressBar = (ProgressBar) mDialog.findViewById(R.id.pg_helpPhoto);
             Glide.with(context)
                     .load(imageUrl)
@@ -276,7 +294,7 @@ public class CustomDialog {
                             return false;
                         }
                     })
-                    .into(imgHelpPhoto);
+                    .into(imgHelpPhoto);*/
 
             //Utils.setImage(imageUrl, R.color.colorHint, imgHelpPhoto);
             if (mDialog != null) {

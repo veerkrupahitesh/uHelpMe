@@ -81,11 +81,11 @@
                     android:textSize="13sp" />
 
                 <android.support.v7.widget.RecyclerView
-                    android:background="#E9E5E5"
                     android:id="@+id/recyclerView_category"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:background="#E9E5E5"
                     android:orientation="horizontal" />
 
                 <TextView
@@ -98,10 +98,10 @@
                     android:textSize="13sp" />
 
                 <LinearLayout
-                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingBottom="5dp">
 
@@ -121,64 +121,85 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="1px"
                     android:background="@color/colorHint" />
-
-               <!-- <Spinner
-                    android:id="@+id/sp_timeLimits"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:entries="@array/dateEntries" />-->
 
                 <LinearLayout
                     android:id="@+id/lin_selectDate"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="10dp"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/tv_helpPostDate"
                         style="@style/editTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="10dp"
                         android:hint="@string/select_date"
-                        android:onClick="onClick" />
+                        android:onClick="onClick"
+                        android:visibility="visible" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
+                        android:layout_height="1px"
                         android:layout_marginTop="5dp"
                         android:background="@color/colorTextGray" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_marginTop="5dp"
                     android:id="@+id/lin_selectHours"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/tv_helpPostHours"
                         style="@style/editTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="10dp"
                         android:hint="@string/select_hours"
                         android:onClick="onClick"
                         android:visibility="visible" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
+                        android:layout_height="1px"
                         android:layout_marginTop="5dp"
                         android:background="@color/colorTextGray" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp">
+
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/sp_amount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:spinnerMode="dialog" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/img_arrow_selectbox" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorTextGray" />
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/input_layout_description"
@@ -199,7 +220,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="1px"
                     android:layout_marginTop="5dp"
                     android:background="@color/colorTextGray" />
 
@@ -208,6 +229,8 @@
                     style="@style/buttonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/drw_button_shape"
                     android:onClick="onClick"
                     android:text="@string/update" />

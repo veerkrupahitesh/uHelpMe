@@ -286,12 +286,12 @@
     <string name="str_enter_confirm_pass">Entrez le mot de passe de confirmation</string>
     <string name="str_terms_and_condtions">Acceptez les termes et conditions</string>
     <string name="amount_">montant :</string>
-    <string name="help_seeker">Chercheur d\'aide :</string>
+    <string name="help_seeker">Seeker d\'aide :</string>
     <string name="str_upload_photos">Télécharger une photo</string>
     <string name="str_maximun_photos">Maximum de quatre photos autorisées à télécharger</string>
-    <string name="str_select_amount">Select amount rate</string>
-    <string name="str_fixed_rate">Fixed rate</string>
-    <string name="str_now">Now</string>
+    <string name="str_select_amount">Sélectionnez taux de montant</string>
+    <string name="str_fixed_rate">Taux fixe</string>
+    <string name="str_now">À présent</string>
     <string name="groups">Groupes</string>
     <string name="user">Utilisateurs</string>
 </resources>
