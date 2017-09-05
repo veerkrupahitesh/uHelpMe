@@ -292,4 +292,6 @@
     <string name="str_select_amount">Select amount rate</string>
     <string name="str_fixed_rate">Fixed rate</string>
     <string name="str_now">Now</string>
+    <string name="groups">Groupes</string>
+    <string name="user">Utilisateurs</string>
 </resources>
