@@ -294,4 +294,6 @@
     <string name="str_now">À présent</string>
     <string name="groups">Groupes</string>
     <string name="user">Utilisateurs</string>
+    <string name="str_houly_rate">Taux horaire</string>
+    <string name="str_tap_here_for_group_info">Tap here for group Info</string>
 </resources>

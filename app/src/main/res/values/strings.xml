@@ -292,4 +292,5 @@
     <string name="str_now">Now</string>
     <string name="groups">Groups</string>
     <string name="user">Users</string>
+    <string name="str_tap_here_for_group_info">Tap here for group Info</string>
 </resources>

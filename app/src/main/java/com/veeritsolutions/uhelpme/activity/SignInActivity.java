@@ -295,6 +295,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickEvent, D
         params.put("Password", "");
         params.put("AcTokenId", "");
         params.put("RegisteredBy", RegisterBy.FACEBOOK.getRegisterBy());
+        params.put("ProfilePic", "");
 
         RestClient.getInstance().post(this, Request.Method.POST, params, ApiList.CLIENT_INSERT,
                 true, RequestCode.clientInsert, this);

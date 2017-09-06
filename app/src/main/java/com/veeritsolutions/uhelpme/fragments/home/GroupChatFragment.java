@@ -53,7 +53,7 @@ public class GroupChatFragment extends Fragment implements OnClickEvent, OnBackP
     private RecyclerView recyclerViewGroupChat;
     private EditText inputText;
     private Button btnSend;
-    private TextView tvHeader;
+    private TextView tvHeader, tvGroupInfo;
     private ImageView imgProfilePic;
     private Toolbar toolbar;
 
@@ -97,6 +97,9 @@ public class GroupChatFragment extends Fragment implements OnClickEvent, OnBackP
         tvHeader = (TextView) rootView.findViewById(R.id.tv_headerTitle);
         tvHeader.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
         tvHeader.setText(chatGroupModel.getName());
+
+        tvGroupInfo = (TextView) rootView.findViewById(R.id.tv_groupInfo);
+        tvGroupInfo.setTypeface(MyApplication.getInstance().FONT_WORKSANS_MEDIUM);
 
         imgProfilePic = (ImageView) rootView.findViewById(R.id.img_profilePhoto);
         Utils.setImage(chatGroupModel.getProfilePic(), R.drawable.img_user_placeholder, imgProfilePic);

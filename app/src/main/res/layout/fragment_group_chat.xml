@@ -31,21 +31,41 @@
                     android:layout_centerInParent="true"
                     android:layout_gravity="center_vertical"
                     android:onClick="onClick"
-                    android:padding="20dp"
+                    android:padding="10dp"
                     android:src="@drawable/img_back_icon" />
 
-                <TextView
-                    android:id="@+id/tv_headerTitle"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerInParent="true"
+                    android:layout_toEndOf="@+id/img_back_header"
                     android:layout_toLeftOf="@+id/img_profilePhoto"
                     android:layout_toRightOf="@+id/img_back_header"
-                    android:ellipsize="end"
+                    android:layout_toStartOf="@+id/img_profilePhoto"
                     android:gravity="center"
-                    android:maxLines="1"
-                    android:textColor="@color/colorTitle"
-                    android:textSize="17sp" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_headerTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:gravity="center|start"
+                        android:maxLines="1"
+                        android:textColor="@color/colorTitle"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:id="@+id/tv_groupInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:gravity="center|start"
+                        android:maxLines="1"
+                        android:text="@string/str_tap_here_for_group_info"
+                        android:textColor="@color/colorHint"
+                        android:textSize="12sp" />
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/img_profilePhoto"
