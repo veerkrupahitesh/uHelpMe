@@ -207,9 +207,9 @@ public class HomeActivity extends AppCompatActivity implements OnBackPressedEven
         if (PrefHelper.getInstance().containKey(PrefHelper.LANGUAGE)) {
             String str = PrefHelper.getInstance().getString(PrefHelper.LANGUAGE, "en");
             super.attachBaseContext(MyContextWrapper.wrap(newBase, str));
-            return;
+        } else {
+            super.attachBaseContext(MyContextWrapper.wrap(newBase, "en"));
         }
-        super.attachBaseContext(newBase);
     }
 
     @Override

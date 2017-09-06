@@ -24,18 +24,16 @@ import com.veeritsolutions.uhelpme.utility.MyContextWrapper;
 
 public class ProfileActivity extends AppCompatActivity implements OnClickEvent, OnBackPressedEvent {
 
-    OnClickEvent onClickEvent;
-    OnBackPressedEvent onBackPressedEvent;
-
-    FragmentManager fragmentManager;
-    FragmentTransaction fragmentTransaction;
-    Fragment currentFragment;
     private static PayPalConfiguration config = new PayPalConfiguration()
             // Start with mock environment.  When ready, switch to sandbox (ENVIRONMENT_SANDBOX)
             // or live (ENVIRONMENT_PRODUCTION)
             .environment(PayPalConfiguration.ENVIRONMENT_PRODUCTION)
             .clientId(Constants.PAYPAL_LIVE_CLIENT_ID);
-
+    OnClickEvent onClickEvent;
+    OnBackPressedEvent onBackPressedEvent;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    Fragment currentFragment;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
@@ -70,10 +68,13 @@ public class ProfileActivity extends AppCompatActivity implements OnClickEvent, 
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        String str = PrefHelper.getInstance().getString(PrefHelper.LANGUAGE, "en");
-        super.attachBaseContext(MyContextWrapper.wrap(newBase, str));
+        if (PrefHelper.getInstance().containKey(PrefHelper.LANGUAGE)) {
+            String str = PrefHelper.getInstance().getString(PrefHelper.LANGUAGE, "en");
+            super.attachBaseContext(MyContextWrapper.wrap(newBase, str));
+        } else {
+            super.attachBaseContext(MyContextWrapper.wrap(newBase, "en"));
+        }
     }
-
 
     public void pushFragment(Fragment fragment, boolean addToBackStack, boolean shouldAnimate, Bundle bundle) {
 

@@ -3,7 +3,6 @@ package com.veeritsolutions.uhelpme.fragments.home;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
@@ -57,7 +56,6 @@ import com.veeritsolutions.uhelpme.utility.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static android.content.Context.SENSOR_SERVICE;
@@ -120,25 +118,7 @@ public class HomeFragment extends Fragment implements OnClickEvent, DataObserver
     public void onResume() {
         super.onResume();
         imgUserProfile.setEnabled(true);
-        if (PrefHelper.getInstance().containKey(PrefHelper.LANGUAGE)) {
-            lang = PrefHelper.getInstance().getString(PrefHelper.LANGUAGE, "en");
-        }
-        Configuration config = homeActivity.getBaseContext().getResources().getConfiguration();
-        if (!"".equals(lang) && !config.locale.getLanguage().equals(lang)) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                config.setLocale(locale);
-                //profileActivity.getBaseContext().createConfigurationContext(config);
-                homeActivity.getBaseContext().getResources().updateConfiguration(config, homeActivity.getBaseContext().getResources().getDisplayMetrics());
-            } else {
-                config.locale = locale;
-                homeActivity.getBaseContext().getResources().updateConfiguration(config, homeActivity.getBaseContext().getResources().getDisplayMetrics());
-            }
-            //  profileActivity.recreate();
-        }
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

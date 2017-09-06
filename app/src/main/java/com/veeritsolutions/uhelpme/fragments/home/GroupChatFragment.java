@@ -124,7 +124,9 @@ public class GroupChatFragment extends Fragment implements OnClickEvent, OnBackP
                     // ... do something here
                     if (adpChat.getItemCount() > 0)
                         linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
-                    // homeActivity.linFooterView.setVisibility(View.GONE);
+                    //homeActivity.linFooterView.setVisibility(View.GONE);
+                } else {
+                    //homeActivity.linFooterView.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -217,12 +219,6 @@ public class GroupChatFragment extends Fragment implements OnClickEvent, OnBackP
 
                     homeActivity.pushFragment(new OtherPersonProfileFragment(), true, false, bundle);
                 }
-                break;
-
-            case R.id.edt_sendMsg:
-                //inputText.requestFocus();
-                if (adpChat.getItemCount() > 0)
-                    linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
                 break;
         }
     }

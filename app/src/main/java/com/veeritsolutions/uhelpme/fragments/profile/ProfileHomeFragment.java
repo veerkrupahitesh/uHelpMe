@@ -47,6 +47,7 @@ public class ProfileHomeFragment extends Fragment implements OnClickEvent, OnBac
 
     private ProfileActivity profileActivity;
     private LoginUserModel loginUserModel;
+    private String lang;
 
 
     @Override
@@ -55,6 +56,7 @@ public class ProfileHomeFragment extends Fragment implements OnClickEvent, OnBac
         profileActivity = (ProfileActivity) getActivity();
         loginUserModel = LoginUserModel.getLoginUserModel();
     }
+
 
     @Nullable
     @Override

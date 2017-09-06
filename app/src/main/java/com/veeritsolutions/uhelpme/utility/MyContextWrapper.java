@@ -12,7 +12,7 @@ import java.util.Locale;
  * Created by VEER7 on 8/3/2017.
  */
 
-public class MyContextWrapper   extends ContextWrapper {
+public class MyContextWrapper extends ContextWrapper {
 
     public MyContextWrapper(Context base) {
         super(base);
@@ -21,13 +21,13 @@ public class MyContextWrapper   extends ContextWrapper {
     @SuppressWarnings("deprecation")
     public static ContextWrapper wrap(Context context, String language) {
         Configuration config = context.getResources().getConfiguration();
-        Locale sysLocale = null;
+        Locale sysLocale;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             sysLocale = getSystemLocale(config);
         } else {
             sysLocale = getSystemLocaleLegacy(config);
         }
-        if (!language.equals("") && !sysLocale.getLanguage().equals(language)) {
+        if (!language.equals("") /*&& !sysLocale.getLanguage().equals(language)*/) {
             Locale locale = new Locale(language);
             Locale.setDefault(locale);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -45,22 +45,22 @@ public class MyContextWrapper   extends ContextWrapper {
     }
 
     @SuppressWarnings("deprecation")
-    public static Locale getSystemLocaleLegacy(Configuration config){
+    public static Locale getSystemLocaleLegacy(Configuration config) {
         return config.locale;
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    public static Locale getSystemLocale(Configuration config){
+    public static Locale getSystemLocale(Configuration config) {
         return config.getLocales().get(0);
     }
 
     @SuppressWarnings("deprecation")
-    public static void setSystemLocaleLegacy(Configuration config, Locale locale){
+    public static void setSystemLocaleLegacy(Configuration config, Locale locale) {
         config.locale = locale;
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    public static void setSystemLocale(Configuration config, Locale locale){
+    public static void setSystemLocale(Configuration config, Locale locale) {
         config.setLocale(locale);
     }
 }

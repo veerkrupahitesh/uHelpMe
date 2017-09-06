@@ -89,6 +89,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         firebaseDatabase.setPersistenceEnabled(true);
     }
 
+
     @Override
     public void onTerminate() {
         super.onTerminate();
@@ -127,8 +128,8 @@ public class MyApplication extends Application implements Application.ActivityLi
     }
 
     @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
         MultiDex.install(this);
     }
 
