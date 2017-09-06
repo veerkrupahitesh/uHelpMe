@@ -7,9 +7,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -58,6 +60,7 @@ public class OneToOneChatActivity extends AppCompatActivity implements OnClickEv
     // Firebase variables and objects
     // private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReferenceOne, databaseReferenceTwo;
+    private View rootView;
 
 
     @Override
@@ -97,20 +100,38 @@ public class OneToOneChatActivity extends AppCompatActivity implements OnClickEv
         inputText = (EditText) findViewById(R.id.edt_sendMsg);
         btnSend = (Button) findViewById(R.id.img_send);
 
+        inputText.requestFocus();
+        rootView = LayoutInflater.from(this).inflate(R.layout.fragment_one_to_one_chat, null, false);
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff = rootView.getRootView().getHeight() - rootView.getHeight();
+                if (heightDiff > Utils.dpToPx(200)) { // if more than 200 dp, it's probably a keyboard...
+                    // ... do something here
+                    if (adpChat.getItemCount() > 0)
+                        linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
+                    // homeActivity.linFooterView.setVisibility(View.GONE);
+                }
+            }
+        });
+
         inputText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                if (adpChat.getItemCount() > 0)
+                    linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                if (adpChat.getItemCount() > 0)
+                    linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                if (adpChat.getItemCount() > 0)
+                    linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
                 String str = inputText.getText().toString().trim();
 
                 if (str.isEmpty()) {
@@ -129,6 +150,7 @@ public class OneToOneChatActivity extends AppCompatActivity implements OnClickEv
             @Override
             public void onChanged() {
                 super.onChanged();
+                if (adpChat.getItemCount() > 0)
                 linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
             }
         });

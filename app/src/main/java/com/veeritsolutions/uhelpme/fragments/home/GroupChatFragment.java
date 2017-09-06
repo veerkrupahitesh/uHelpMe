@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -56,6 +57,7 @@ public class GroupChatFragment extends Fragment implements OnClickEvent, OnBackP
     private TextView tvHeader, tvGroupInfo;
     private ImageView imgProfilePic;
     private Toolbar toolbar;
+    private LinearLayoutManager linearLayoutManager;
 
     private HomeActivity homeActivity;
     private AdpOneToOneChat adpChat;
@@ -105,26 +107,45 @@ public class GroupChatFragment extends Fragment implements OnClickEvent, OnBackP
         Utils.setImage(chatGroupModel.getProfilePic(), R.drawable.img_user_placeholder, imgProfilePic);
 
         recyclerViewGroupChat = (RecyclerView) rootView.findViewById(R.id.recyclerView_chat);
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(homeActivity, LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager = new LinearLayoutManager(homeActivity, LinearLayoutManager.VERTICAL, false);
         recyclerViewGroupChat.setLayoutManager(linearLayoutManager);
+
         // Setup our input methods. Enter key on the keyboard or pushing the send button
         inputText = (EditText) rootView.findViewById(R.id.edt_sendMsg);
         btnSend = (Button) rootView.findViewById(R.id.img_send);
 
+        inputText.requestFocus();
+
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff = rootView.getRootView().getHeight() - rootView.getHeight();
+                if (heightDiff > Utils.dpToPx(200)) { // if more than 200 dp, it's probably a keyboard...
+                    // ... do something here
+                    if (adpChat.getItemCount() > 0)
+                        linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
+                    // homeActivity.linFooterView.setVisibility(View.GONE);
+                }
+            }
+        });
+
         inputText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                if (adpChat.getItemCount() > 0)
+                    linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                if (adpChat.getItemCount() > 0)
+                    linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                if (adpChat.getItemCount() > 0)
+                    linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
                 String str = inputText.getText().toString().trim();
 
                 if (str.isEmpty()) {
@@ -142,7 +163,8 @@ public class GroupChatFragment extends Fragment implements OnClickEvent, OnBackP
             @Override
             public void onChanged() {
                 super.onChanged();
-                linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
+                if (adpChat.getItemCount() > 0)
+                    linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
             }
         });
 
@@ -195,6 +217,12 @@ public class GroupChatFragment extends Fragment implements OnClickEvent, OnBackP
 
                     homeActivity.pushFragment(new OtherPersonProfileFragment(), true, false, bundle);
                 }
+                break;
+
+            case R.id.edt_sendMsg:
+                //inputText.requestFocus();
+                if (adpChat.getItemCount() > 0)
+                    linearLayoutManager.scrollToPosition(adpChat.getItemCount() - 1);
                 break;
         }
     }

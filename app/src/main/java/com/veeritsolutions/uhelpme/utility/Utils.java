@@ -25,6 +25,7 @@ import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -364,6 +365,11 @@ public class Utils {
         bm = BitmapFactory.decodeFile(imagePath, options);
 
         return bm;
+    }
+
+    public static float dpToPx(float valueInDp) {
+        DisplayMetrics metrics = MyApplication.getInstance().getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 
     public static String getStringImage(String imagePath, ImageUpload imageUpload) {
