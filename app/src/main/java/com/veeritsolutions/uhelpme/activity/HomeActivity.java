@@ -129,24 +129,11 @@ public class HomeActivity extends AppCompatActivity implements OnBackPressedEven
         permission.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
         permission.add(Manifest.permission.ACCESS_NETWORK_STATE);
 
-        //PermissionClass.checkPermission(this, PermissionClass.REQUEST_CODE_RUNTIME_PERMISSION, permission);
-
         buildGoogleApiClient();
         createLocationRequest();
         buildLocationSettingsRequest();
 
         fragmentManager = getSupportFragmentManager();
-
-//        imgHome.setImageResource(R.drawable.img_home_active);
-//        imgSearch.setImageResource(R.drawable.img_search_tabbar_inactive);
-//        imgDashbord.setImageResource(R.drawable.img_dashboard_inactive);
-//        imgChatRoom.setImageResource(R.drawable.img_chat_room_inactive);
-//        imgHelpMe.setImageResource(R.drawable.img_helpme);
-//
-//        tvHome.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
-//        tvSearch.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//        tvDashBoard.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
-//        tvChatRoom.setTextColor(ResourcesCompat.getColor(getResources(), R.color.colorHint, null));
 
         loginUserModel = LoginUserModel.getLoginUserModel();
         pushFragment(new HomeFragment(), true, false, null);
@@ -169,20 +156,6 @@ public class HomeActivity extends AppCompatActivity implements OnBackPressedEven
             if (mGoogleApiClient.isConnected())
                 startLocationUpdates();
         }
-        /*Configuration config = getBaseContext().getResources().getConfiguration();
-        if (!"".equals(lang) && !config.locale.getLanguage().equals(lang)) {
-            Locale locale = new Locale(lang);
-            Locale.setDefault(locale);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                config.setLocale(locale);
-                //profileActivity.getBaseContext().createConfigurationContext(config);
-                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-            } else {
-                config.locale = locale;
-                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-            }
-            //  profileActivity.recreate();
-        }*/
     }
 
     @Override

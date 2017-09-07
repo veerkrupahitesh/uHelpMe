@@ -298,6 +298,7 @@ public class HelpDetailFragment extends Fragment implements OnBackPressedEvent, 
                 Utils.buttonClickEffect(view);
                 if (postedJobModel != null) {
                     ArrayList<String> list = new ArrayList<>();
+                    list.add(postedJobModel.getJobPhoto());
                     if (!postedJobModel.getJobPhoto1().isEmpty())
                         list.add(postedJobModel.getJobPhoto1());
                     if (!postedJobModel.getJobPhoto2().isEmpty())
