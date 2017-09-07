@@ -3,7 +3,6 @@ package com.veeritsolutions.uhelpme.adapters;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
-import android.support.v4.content.res.ResourcesCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 
 import com.veeritsolutions.uhelpme.MyApplication;
 import com.veeritsolutions.uhelpme.R;
@@ -65,7 +63,6 @@ public class AdpLocation extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
 
         try {
-
             ViewHolder holder;
             if (convertView == null) {
                 convertView = LayoutInflater.from(context).inflate(R.layout.list_item_location, parent, false);
@@ -150,7 +147,7 @@ public class AdpLocation extends BaseAdapter {
 
             //  Set Font Type
             txtLocationName.setTypeface(MyApplication.getInstance().FONT_WORKSANS_REGULAR);
-            // txtLoading.setTypeface(MyApplication.getInstance().FONT_ROBOTO_REGULAR);
+            //txtLoading.setTypeface(MyApplication.getInstance().FONT_ROBOTO_REGULAR);
 
         }
     }
